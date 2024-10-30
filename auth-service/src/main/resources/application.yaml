@@ -11,7 +11,7 @@ spring:
     name: auth-service
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -29,5 +29,7 @@ application:
       expiration: 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
+    password:
+      default-prefix: 123456
 server:
   port: 10001

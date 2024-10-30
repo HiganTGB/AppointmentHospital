@@ -1,6 +1,8 @@
 package appointmenthospital.authservice.auth;
 
 import appointmenthospital.authservice.config.JwtService;
+import appointmenthospital.authservice.log.CustomLogger;
+import appointmenthospital.authservice.log.LogDTO;
 import appointmenthospital.authservice.model.entity.User;
 import appointmenthospital.authservice.repository.UserRepository;
 import appointmenthospital.authservice.token.Token;
@@ -27,6 +29,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final CustomLogger logger;
 
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
@@ -62,6 +65,7 @@ public class AuthenticationService {
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
+        logger.log(this.getClass().toString(),"User with id "+ user.getId() + " login success");
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)

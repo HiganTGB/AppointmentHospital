@@ -6,10 +6,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Column;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
+
 
 @MappedSuperclass
 @Getter
@@ -26,6 +26,7 @@ public abstract class BaseEntity extends DataInfoTime {
     }
 
     public BaseEntity() {
+        super();
 
     }
 }

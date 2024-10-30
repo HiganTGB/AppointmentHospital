@@ -24,7 +24,7 @@ public class PatientProfile extends BaseEntity {
     private String email;
     @Column(nullable = false,name = "address")
     private String address;
-    @Column(nullable = false,name = "account_id",updatable = false)
+    @Column(nullable = true,name = "account_id",updatable = false)
     private Long account_id;
     @OneToMany(mappedBy = "patientProfile",targetEntity = Examination.class)
     private List<Examination> examinations;

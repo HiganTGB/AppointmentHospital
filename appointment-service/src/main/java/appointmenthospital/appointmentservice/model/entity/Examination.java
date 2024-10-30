@@ -3,11 +3,12 @@ package appointmenthospital.appointmentservice.model.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 @Entity
 public class Examination extends BaseEntity {
     private long roomId;
-    private String medicalSpeciatly;
+    private String medicalSpecialty;
     @ManyToOne(targetEntity = PatientProfile.class)
     private PatientProfile patientProfile;
     private long doctorId;
@@ -15,5 +16,5 @@ public class Examination extends BaseEntity {
     private Long number;
     private Timestamp time;
     private int status;
-    private Long price;
+    private BigDecimal price;
 }

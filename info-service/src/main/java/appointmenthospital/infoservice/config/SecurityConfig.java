@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request->request.requestMatchers("/api/v1/test/demo-controller").hasAuthority("PER_CREATE_FOO").anyRequest().permitAll())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+              //  .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

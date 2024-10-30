@@ -48,6 +48,9 @@ public class User extends BaseEntity implements UserDetails {
     private Role role;
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
+    @OneToOne(mappedBy = "user",targetEntity = Doctor.class,fetch = FetchType.LAZY)
+    private Doctor doctor;
+
 
     @JsonProperty("username")
     @Override
