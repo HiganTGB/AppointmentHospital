@@ -1,16 +1,18 @@
 version: '3.8'
 services:
-  info-db:
-    container_name: AppointmentHospital_info_
+  account-db:
+    container_name: appointmentHospital_db
     image: mysql:8.0
     command: mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
-      - '3308:3306'
+      - '3307:3306'
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: info
+      MYSQL_DATABASE: appointmentHospital
       MYSQL_USER: user
       MYSQL_PASSWORD: passpass
 volumes:
   db:
     driver: local
+  cache:
+      driver: local

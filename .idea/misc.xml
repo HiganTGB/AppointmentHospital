@@ -14,6 +14,9 @@
         <option value="$PROJECT_DIR$/thymeleaf-client/pom.xml" />
         <option value="$PROJECT_DIR$/schedule-service/pom.xml" />
         <option value="$PROJECT_DIR$/payment-service/pom.xml" />
+        <option value="$PROJECT_DIR$/1-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/0.eureka-server/pom.xml" />
+        <option value="$PROJECT_DIR$/2-auth-service/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

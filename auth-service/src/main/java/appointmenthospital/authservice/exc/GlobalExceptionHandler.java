@@ -8,14 +8,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.Arrays;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
     private final CustomLogger logger;
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public String handleMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        logger.log(ex.getClass().toString(),String.format("Unsupported HTTP method %s for request.Supported method is %s",ex.getMethod(),ex.getHeaders()));
+        return "Method '" + ex.getMethod() + "' not supported for this request.";
+    }
     @ExceptionHandler({ AppException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleExceptionA(AppException e) {

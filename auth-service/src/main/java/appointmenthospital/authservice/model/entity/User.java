@@ -13,13 +13,16 @@ import java.sql.Timestamp;
 
 import java.util.*;
 
+
 @SuppressWarnings("unused")
 @JsonAutoDetect
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table
 public class User extends BaseEntity implements UserDetails {
 
     @Column(nullable = false,name = "password")

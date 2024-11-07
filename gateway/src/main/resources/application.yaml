@@ -11,6 +11,12 @@ spring:
   name: api-gateway
  cloud:
   gateway:
+   globalcors:
+    cors-configurations:
+     '[/**]':
+      allowedOrigins: "http://localhost:10010"
+      allowedHeaders: "*"
+      allowedMethods: "*"
    discovery:
     locator:
      enabled: true

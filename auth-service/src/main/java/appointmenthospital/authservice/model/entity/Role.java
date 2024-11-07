@@ -2,18 +2,20 @@ package appointmenthospital.authservice.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table
-@Getter
-@Setter
 public class Role extends BaseEntity {
     @Transient
     public final static int PERMISSIONS_STRING_LIMIT = 60;
@@ -34,10 +36,6 @@ public class Role extends BaseEntity {
 
     public Role(String name) {
         this.name=name;
-    }
-
-    public Role() {
-
     }
 
     public boolean isPermissionGranted(int permissionCode) {

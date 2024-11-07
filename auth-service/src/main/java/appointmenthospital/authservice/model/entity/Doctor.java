@@ -12,6 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table
 public class Doctor extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)

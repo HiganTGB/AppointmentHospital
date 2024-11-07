@@ -2,15 +2,17 @@ package appointmenthospital.authservice.model.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.*;
 
 
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Entity
+@Table
 public class Doctor_Specialty extends BaseEntity {
     @ManyToOne
     private Doctor doctor;
