@@ -1,4 +1,5 @@
 package appointmenthospital.filestorage.exc;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,10 +25,10 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         errors.put("error", exception.getMessage());
         return new ResponseEntity<>(errors, exception.getHttpStatus());
     }
-
-    @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException exc) {
-        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
-                .body("File too large!");
-    }
+//    @Order(1)
+//    @ExceptionHandler(MaxUploadSizeExceededException.class)
+//    public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException exc) {
+//        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+//                .body("File too large!");
+//    }
 }

@@ -1,10 +1,10 @@
 package appointmenthospital.infoservice.controller;
 
-import appointmenthospital.infoservice.model.dto.DoctorDTO;
+import appointmenthospital.infoservice.model.dto.DoctorDomain;
 import appointmenthospital.infoservice.model.dto.MedicalSpecialtyDTO;
 import appointmenthospital.infoservice.model.dto.RoomDTO;
-import appointmenthospital.infoservice.model.entity.Specialty_Doctor;
 import appointmenthospital.infoservice.service.MedicalSpecialtyService;
+import appointmenthospital.infoservice.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,11 +14,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/specialty")
 @RequiredArgsConstructor
 public class MedicalSpecialtyController {
     private final MedicalSpecialtyService medicalSpecialtyService;
+    private final RoomService roomService;
     @GetMapping("/{id}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
@@ -56,9 +59,9 @@ public class MedicalSpecialtyController {
     @PostMapping("/{id}/add")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Boolean add(@PathVariable Long id, @RequestBody DoctorDTO doctorDTO)
+    public Long add(@PathVariable Long id, @RequestBody DoctorDomain doctorDomain)
     {
-        return medicalSpecialtyService.addDoctor(doctorDTO,id);
+        return medicalSpecialtyService.addDoctor(doctorDomain,id);
     }
     @PostMapping("/{id}/remove")
     @ResponseStatus(HttpStatus.OK)
@@ -66,5 +69,28 @@ public class MedicalSpecialtyController {
     public Boolean remove(@PathVariable Long id)
     {
         return medicalSpecialtyService.removeDoctor(id);
+    }
+
+
+    @GetMapping("/{id}/rooms")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<RoomDTO> getRooms(@PathVariable Long id)
+    {
+        return roomService.getAllByMedicalSpecialty(id);
+    }
+    @GetMapping("/list")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<MedicalSpecialtyDTO> getAll()
+    {
+        return medicalSpecialtyService.getAll();
+    }
+    @GetMapping("/doctor/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<MedicalSpecialtyDTO> getMedicalByDoctorID(@PathVariable Long id)
+    {
+        return medicalSpecialtyService.getAllByDoctorID(id);
     }
 }

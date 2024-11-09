@@ -5,6 +5,7 @@ import appointmenthospital.authservice.log.CustomLogger;
 import appointmenthospital.authservice.log.LogDTO;
 import appointmenthospital.authservice.model.entity.User;
 import appointmenthospital.authservice.repository.UserRepository;
+import appointmenthospital.authservice.service.UserService;
 import appointmenthospital.authservice.token.Token;
 import appointmenthospital.authservice.token.TokenRepository;
 import appointmenthospital.authservice.token.TokenType;
@@ -30,8 +31,13 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final CustomLogger logger;
+    private final UserService userService;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        if(phoneExist(request.getPhone()))
+        {
+            throw new IllegalStateException("Phone already exists");
+        }
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
@@ -120,5 +126,17 @@ public class AuthenticationService {
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
+    }
+    private boolean emailExist(String email) {
+        return repository.existsByEmail(email);
+    }
+    private boolean phoneExist(String phone) {
+        return repository.existsByPhone(phone);
+    }
+    private boolean emailExist(String email,String oldEmail) {
+        return repository.existsByEmailAndEmailNotLike(email,oldEmail);
+    }
+    private boolean phoneExist(String phone,String oldPhone) {
+        return repository.existsByPhoneAndPhoneNotLike(phone,oldPhone);
     }
 }

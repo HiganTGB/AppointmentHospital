@@ -15,7 +15,7 @@ import lombok.*;
 public class Specialty_Doctor extends BaseEntity{
     @ManyToOne
     private MedicalSpecialty medicalSpecialty;
-    private long Doctor_id;
+    private long doctorID;
 
 
 }

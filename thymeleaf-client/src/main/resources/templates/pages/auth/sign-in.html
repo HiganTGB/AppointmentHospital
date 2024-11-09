@@ -48,7 +48,7 @@
                 <form id="sign-in-Form" autocomplete="off" novalidate>
                     <div class="mb-3">
                         <label class="form-label">Phone</label>
-                        <input name="phone" type="tel" class="form-control" placeholder="01234567890" autocomplete="off">
+                        <input id="phone" name="phone" type="tel" class="form-control" placeholder="01234567890" autocomplete="off">
                     </div>
                     <p id="js-login-error" class="text-danger m-0 d-none">Bad Credentials</p>
                     <div class="mb-2">
@@ -59,7 +59,7 @@
                     </span>
                         </label>
                         <div class="input-group input-group-flat">
-                            <input name="password" type="password" class="form-control"  placeholder="Your password"  autocomplete="off">
+                            <input id="password" name="password" type="password" class="form-control"  placeholder="Your password"  autocomplete="off">
                             <span class="input-group-text">
                       <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip"><!-- Download SVG icon from http://tabler-icons.io/i/eye -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
@@ -107,35 +107,44 @@
 </body>
 <!--Script-->
 <script>
-    // jQuery.noConflict();
-    // (function ($) {
-    //     $(document).ready(function() {
-    //         console.log("jQuery is ready!");
-    //         $('#sign-in-Form').submit(function(event) {
-    //             event.preventDefault(); // Ngăn chặn submit form theo mặc định
-    //
-    //             var formData = $(this).serialize(); // Lấy dữ liệu từ form
-    //             var jsonData = JSON.stringify(formData); // Chuyển đổi thành JSON
-    //             console.log(jsonData);
-    //             $.ajax({
-    //                 type: "POST",
-    //                 url: "http://localhost:9999/api/v1/auth/authenticate",
-    //                 data: jsonData,
-    //                 contentType: "application/json",
-    //                 dataType: "json",
-    //                 cache: false,
-    //                 processData:false,
-    //                 success: function(response) {
-    //                     console.log(response); // Xử lý dữ liệu trả về từ server
-    //                 },
-    //                 error: function(error) {
-    //                     console.error(error);
-    //                 }
-    //             });
-    //         });
-    //     });
-    //
-    // })(jQuery);
+    jQuery.noConflict();
+    (function ($) {
+        $(document).ready(function() {
+            console.log("jQuery is ready!");
+            $('#sign-in-Form').submit(function(event) {
+                event.preventDefault();
+                var data = {
+                    "phone" : $("#phone").val(),
+                    "password": $("#password").val()
+                };
+                console.log(data);
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:9999/api/v1/auth/authenticate",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                   // cache: false,
+                  //  processData:false,
+                    success: function(response) {
+
+                        sessionStorage.setItem('access_token', response.access_token);
+                        sessionStorage.setItem('refresh_token', response.refresh_token);
+                        var encodedProfile = response.access_token.split('.')[1];
+                        var profile = JSON.parse(window.atob(encodedProfile));
+                        console.log(profile);
+                        console.log(response); // Xử lý dữ liệu trả về từ server
+                        window.location.href = "/admin"
+                    },
+                    error: function(error) {
+                        sessionStorage.removeItem('access_token');
+                        sessionStorage.removeItem('refresh_token');
+                        console.error(error);
+                    }
+                });
+            });
+        });
+    })(jQuery);
 
 </script>
 </html>

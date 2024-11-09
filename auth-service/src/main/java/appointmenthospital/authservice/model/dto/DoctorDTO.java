@@ -15,8 +15,8 @@ public class DoctorDTO {
     private Degree degree;
 
     private boolean gender;
+    private String urlAvatar;
     private Timestamp createAt;
-
     private Timestamp updateAt;
     public DoctorDTO(Doctor doctor)
     {
@@ -25,6 +25,7 @@ public class DoctorDTO {
         this.gender=doctor.isGender();
         this.createAt=doctor.getCreateAt();
         this.updateAt=doctor.getUpdateAt();
+        this.urlAvatar=doctor.getUrlAvatar();
         UserDTO userDTO=new UserDTO();
         this.userDTO= userDTO.getFromEntity(doctor.getUser());
     }

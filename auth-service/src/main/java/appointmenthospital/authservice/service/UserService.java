@@ -8,6 +8,7 @@ import appointmenthospital.authservice.model.entity.Role;
 import appointmenthospital.authservice.model.entity.User;
 import appointmenthospital.authservice.repository.RoleRepository;
 import appointmenthospital.authservice.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
@@ -33,7 +34,7 @@ public class UserService {
     private final Type pageType = new TypeToken<Page<UserDTO>>(){}.getType();
     @Value("${application.security.password.default-prefix}")
     private long passwordPrefix;
-//    @PostConstruct
+  //  @PostConstruct
     public void initUser()
     {
         Role role=new Role();
@@ -46,7 +47,7 @@ public class UserService {
         var user = User.builder()
                 .firstName("admin")
                 .lastName("admin")
-                .phone("0386152395")
+                .phone("0123456789")
                 .email("admin@gmail.com")
                 .role(roleRepository.getReferenceById(1L))
                 .isEnabled(true)

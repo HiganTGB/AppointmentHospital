@@ -38,8 +38,12 @@ public class UserDTO {
         this.firstName=user.getFirstName();
         this.lastName=user.getLastName();
         this.email=user.getEmail();
+        this.emailVerified=user.getEmailVerified();
+        this.phoneVerified=user.getPhoneVerified();
         this.phone=user.getPhone();
+        this.isStaff=user.getIsStaff();
         this.isEnabled=user.isEnabled();
+
         return this;
     }
 }

@@ -1,5 +1,6 @@
 package appointmenthospital.authservice.service;
 
+import appointmenthospital.authservice.client.FileStorageClient;
 import appointmenthospital.authservice.client.InfoServiceClient;
 import appointmenthospital.authservice.exc.AppException;
 import appointmenthospital.authservice.model.dto.*;
@@ -11,17 +12,23 @@ import appointmenthospital.authservice.repository.DoctorRepository;
 import appointmenthospital.authservice.repository.Doctor_SpecialtyRepository;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import feign.FeignException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,36 +37,48 @@ public class DoctorService {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final Doctor_SpecialtyRepository doctorSpecialtyRepository;
+    @Autowired
+    private FileStorageClient fileStorageClient;
+    @Autowired
     private  InfoServiceClient infoServiceClient;
     private final QDoctor doctor=QDoctor.doctor;
     private final Type pageType = new TypeToken<Page<UserDTO>>(){}.getType();
-    public DoctorDTO create(DoctorRequest doctorRequest)
+    @Transactional
+    public DoctorDTO create(DoctorRequest doctorRequest,MultipartFile file)
     {
+        ResponseEntity<String> response=fileStorageClient.uploadImageToFileSystem(file);
+        String imageURL= response.getBody();
         UserDTO userDTO=userService.create(doctorRequest.getUserRequest());
         User user = modelMapper.map(userDTO,User.class);
         var doctor=Doctor.builder()
                 .user(user)
                 .degree(doctorRequest.getDegree())
                 .gender(doctorRequest.isGender())
-                .urlAvatar("url-example")
+                .urlAvatar(imageURL)
                 .build();
 
         Doctor doctorEntity=doctorRepository.save(doctor);
         for(Long id : doctorRequest.getMedicalSpecialtiesId())
         {
-            try
-            {
-                infoServiceClient.add(id,modelMapper.map(doctor,DoctorDTO.class));
-                Doctor_Specialty doctorSpecialty=new Doctor_Specialty(doctor,id);
+      //      try
+   //         {
+                Long id_spec= infoServiceClient.add(id,new DoctorDomain(doctor));
+                Doctor_Specialty doctorSpecialty=new Doctor_Specialty(doctor,id,id_spec);
                 doctorSpecialtyRepository.save(doctorSpecialty);
-            }catch (Exception e)
-            {
-                throw new AppException("Specialty with "+ id +" Not Found");
-            }
+
+      //      }catch (Exception e)
+     //       {
+             //   throw new AppException("Specialty with "+ id +" Not Found");
+    //        }
         }
+        doctorEntity =getEntity(doctorEntity.getId());
         return new DoctorDTO(doctorEntity);
     }
-    public DoctorDTO update(DoctorRequest doctorRequest,Long id)
+    public List<DoctorListDTO> getList()
+    {
+        return doctorRepository.findAll().stream().map(DoctorListDTO::new).toList();
+    }
+    public DoctorDTO update(DoctorRequest doctorRequest,MultipartFile file,Long id)
     {
         Doctor doctorEntity = getEntity(id);
         UserDTO userDTO=userService.update(doctorRequest.getUserRequest(),doctorEntity.getUser().getId());
@@ -67,33 +86,43 @@ public class DoctorService {
         doctorEntity.setUser(user);
         doctorEntity.setDegree(doctorRequest.getDegree());
         doctorEntity.setGender(doctorRequest.isGender());
+        try
+        {
+            fileStorageClient.deleteImageFromFileSystem(doctorEntity.getUrlAvatar());
+        }catch (FeignException e)
+        {
+            throw new AppException("Cannot delete image");
+        }
+        ResponseEntity<String> response=fileStorageClient.uploadImageToFileSystem(file);
+        String imageURL= response.getBody();
+        doctorEntity.setUrlAvatar(imageURL);
         Doctor doctor=doctorRepository.save(doctorEntity);
 
         for(Doctor_Specialty ds: doctor.getDoctorSpecialties())
         {
             try
             {
-                infoServiceClient.remove(ds.getId());
-            }catch (Exception e)
+                Boolean response_ds =infoServiceClient.remove(ds.getId());
+            }catch (FeignException e)
             {
-                throw new AppException("Specialty Doctor with "+ ds.getId() +" Not Found");
+                throw new AppException("Cannot remove doctor specialty");
             }
         }
         for(Long idSecialty : doctorRequest.getMedicalSpecialtiesId())
         {
             try
             {
-                infoServiceClient.add(idSecialty,modelMapper.map(doctor,DoctorDTO.class));
-                Doctor_Specialty doctorSpecialty=new Doctor_Specialty(doctor,idSecialty);
+                Long id_spec= infoServiceClient.add(idSecialty,new DoctorDomain(doctor));
+                Doctor_Specialty doctorSpecialty=new Doctor_Specialty(doctor,idSecialty,id_spec);
                 doctorSpecialtyRepository.save(doctorSpecialty);
-            }catch (Exception e)
+            }catch (FeignException e)
             {
-                throw new AppException("Specialty with "+ idSecialty +" Not Found");
+                throw new AppException("Cannot add doctor specialty");
             }
         }
         return new DoctorDTO(doctor);
     }
-    private Doctor getEntity(Long id)
+    public Doctor getEntity(Long id)
     {
         return doctorRepository.getReferenceById(id);
     }

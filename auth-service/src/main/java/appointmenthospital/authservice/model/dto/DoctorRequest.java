@@ -21,6 +21,6 @@ public class DoctorRequest {
     private boolean gender;
     @NotNull(message = "Medical Specialty is required")
     @NotEmpty(message = "Medical Specialty is required")
-    @Size(min = 1, max = 2,message = "Medical Specialty is required (min = 2, max = 1)")
+    @Size(min = 1, max = 2,message = "Medical Specialty is required (min = 1, max = 2)")
     private List<Long> MedicalSpecialtiesId;
 }

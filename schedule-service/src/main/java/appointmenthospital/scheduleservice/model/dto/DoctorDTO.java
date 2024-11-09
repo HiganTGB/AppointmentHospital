@@ -1,6 +1,6 @@
-package appointmenthospital.infoservice.model.dto;
+package appointmenthospital.scheduleservice.model.dto;
 
-import appointmenthospital.infoservice.model.entity.Degree;
+
 import lombok.Data;
 
 import java.sql.Timestamp;

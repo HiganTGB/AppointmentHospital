@@ -38,9 +38,12 @@ public class JwtService {
 
     //public String generateToken(UserDetails userDetails)
     public String generateToken(User userDetails) {
+      //  String fullName= userDetails.getFirstName() + " " + userDetails.getLastName();
         Map<String, Object> extraClaims = new HashMap<>();
        // extraClaims.put("permission",userDetails.getAuthorities());
+      //  extraClaims.put("full_name",fullName.trim());
         extraClaims.put("role","ROLE_"+userDetails.getRoleType());
+     //   if(userDetails.getRole()!=null) extraClaims.put("group",userDetails.getRole().getName());
         extraClaims.put("authorities", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .map(authority -> "PER_" + authority)

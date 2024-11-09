@@ -23,7 +23,11 @@ public class Doctor extends BaseEntity {
     private User user;
     @Column(nullable = true)
     private String urlAvatar;
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "doctor")
     @Column
     private List<Doctor_Specialty> doctorSpecialties;
+    public String getFullName()
+    {
+        return String.format("%s %s",this.user.getFirstName(),this.user.getLastName());
+    }
 }

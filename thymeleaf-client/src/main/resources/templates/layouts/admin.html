@@ -7,11 +7,14 @@
 <body>
 <script th:src="@{/js/demo-theme.min.js}"></script>
 <div class="page">
-    <!-- Sidebar -->
-    <aside th:replace="~{components/sidebar :: sidebar}"></aside>
+    <!-- Navbar -->
+    <header th:replace="~{components/navbar :: navbar}"></header>
+    <!--  Menu  -->
+    <header th:replace="~{components/menu :: menu}"></header>
     <div class="page-wrapper" layout:fragment="content">
 
     </div>
+    <footer th:replace="~{components/footer :: footer}"></footer>
 </div>
 <!--Script-->
 <script th:src="@{/js/tabler.min.js}" defer></script>

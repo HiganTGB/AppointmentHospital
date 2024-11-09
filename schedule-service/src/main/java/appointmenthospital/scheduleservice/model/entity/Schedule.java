@@ -1,9 +1,7 @@
-package appointmenthospital.scheduleservice.model;
+package appointmenthospital.scheduleservice.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -15,9 +13,10 @@ import lombok.*;
 public class Schedule extends BaseEntity{
 
     @Column(nullable = false)
-    private Long doctor_id;
+    private Long doctorID;
     @Column(nullable = false)
-    private Long room_id;
+    private Long roomID;
     @Column(nullable = false)
     private Boolean isDay;
+    private DayOfWeek dayOfWeek;
 }

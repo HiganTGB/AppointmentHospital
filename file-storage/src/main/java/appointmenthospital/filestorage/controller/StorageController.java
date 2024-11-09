@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("api/v1/file-storage")
+@RequestMapping("/api/v1/file-storage")
 @RequiredArgsConstructor
 public class StorageController {
     private final StorageService storageService;
 
-    @PostMapping("/upload")
+        @PostMapping("/upload")
     public ResponseEntity<String> uploadImageToFIleSystem(@RequestPart("image") MultipartFile file) {
         return ResponseEntity.ok().body(storageService.uploadImageToFileSystem(file));
     }

@@ -35,9 +35,14 @@ public class SecurityConfiguration {
             "/swagger-ui/**",
             "/webjars/**",
             "/swagger-ui.html"};
+    private static final String[] OPEN_FEIGN_URL ={
+            "/api/v1/doctor/{id}/domain"
+
+    };
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -46,6 +51,9 @@ public class SecurityConfiguration {
                         req
                                 .requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
+                                .requestMatchers(OPEN_FEIGN_URL)
+                                .permitAll()
+                                .requestMatchers("/api/v1/hospital/**").permitAll()
 //                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
 //                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
 //                                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())

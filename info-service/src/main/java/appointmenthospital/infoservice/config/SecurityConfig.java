@@ -21,12 +21,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private static final String[] OPEN_FEIGN_URL ={
+            "/api/v1/doctor/{id}/domain"
 
+    };
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request->request.requestMatchers("/api/v1/test/demo-controller").hasAuthority("PER_CREATE_FOO").anyRequest().permitAll())
+                .authorizeHttpRequests(
+                        request->request
+                                .requestMatchers(OPEN_FEIGN_URL).permitAll()
+                                .requestMatchers("/api/v1/test/demo-controller").hasAuthority("PER_CREATE_FOO")
+                                .anyRequest().permitAll())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
               //  .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

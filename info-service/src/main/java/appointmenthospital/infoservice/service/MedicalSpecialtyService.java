@@ -1,7 +1,7 @@
 package appointmenthospital.infoservice.service;
 
 import appointmenthospital.infoservice.exc.ItemNotFoundException;
-import appointmenthospital.infoservice.model.dto.DoctorDTO;
+import appointmenthospital.infoservice.model.dto.DoctorDomain;
 import appointmenthospital.infoservice.model.dto.MedicalSpecialtyDTO;
 import appointmenthospital.infoservice.model.entity.MedicalSpecialty;
 import appointmenthospital.infoservice.model.entity.Specialty_Doctor;
@@ -10,43 +10,46 @@ import appointmenthospital.infoservice.repository.MedicalSpecialtyRepository;
 import appointmenthospital.infoservice.repository.Specialty_DoctorRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Type;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MedicalSpecialtyService {
-    private final Type pageType = new TypeToken<Page<MedicalSpecialtyDTO>>(){}.getType();
+
     private final MedicalSpecialtyRepository medicalSpecialtyRepository;
     private final Specialty_DoctorRepository specialtyDoctorRepository;
-    private final ModelMapper modelMapper;
     private final QMedicalSpecialty medicalSpecialty= QMedicalSpecialty.medicalSpecialty;
     public MedicalSpecialtyDTO create(MedicalSpecialtyDTO medicalSpecialtyDTO)
     {
-        var medical=MedicalSpecialty.builder().name(medicalSpecialtyDTO.getName()).description(medicalSpecialtyDTO.getDescription()).build();
-        return modelMapper.map(medicalSpecialtyRepository.save(medical),MedicalSpecialtyDTO.class);
+        var medical=MedicalSpecialty.builder().name(medicalSpecialtyDTO.getName()).description(medicalSpecialtyDTO.getDescription()).price(medicalSpecialtyDTO.getPrice()).build();
+        return new MedicalSpecialtyDTO(medicalSpecialtyRepository.save(medical));
     }
     public MedicalSpecialtyDTO update(MedicalSpecialtyDTO medicalSpecialtyDTO,Long id)
     {
         MedicalSpecialty medicalSpecialty=medicalSpecialtyRepository.getReferenceById(id);
         medicalSpecialty.setName(medicalSpecialtyDTO.getName());
         medicalSpecialty.setDescription(medicalSpecialtyDTO.getDescription());
-        return modelMapper.map(medicalSpecialtyRepository.save(medicalSpecialty),MedicalSpecialtyDTO.class);
+        medicalSpecialty.setPrice(medicalSpecialtyDTO.getPrice());
+        return new MedicalSpecialtyDTO(medicalSpecialtyRepository.save(medicalSpecialty));
     }
     public Page<MedicalSpecialtyDTO> getPage(String keyword, Pageable pageable)
     {
         BooleanExpression expression= medicalSpecialty.name.contains(keyword);
-        return modelMapper.map(medicalSpecialtyRepository.findAll(expression,pageable),pageType);
+        return (medicalSpecialtyRepository.findAll(expression,pageable).map(MedicalSpecialtyDTO::new));
     }
     public MedicalSpecialtyDTO get(Long id)
     {
-        return modelMapper.map(getEntity(id),MedicalSpecialtyDTO.class);
+        return new MedicalSpecialtyDTO(getEntity(id));
+    }
+    public List<MedicalSpecialtyDTO> getAll()
+    {
+        return medicalSpecialtyRepository.findAll().stream().map(MedicalSpecialtyDTO::new).toList();
     }
     private MedicalSpecialty getEntity(Long id)
     {
@@ -58,14 +61,17 @@ public class MedicalSpecialtyService {
             throw new ItemNotFoundException("Medical Specialty with " +id + " not Found");
         }
     }
-
-
-    public Boolean addDoctor(DoctorDTO doctorDTO, Long id)
+    public Long addDoctor(DoctorDomain doctorDomain, Long id)
     {
         MedicalSpecialty medicalSpecialty=getEntity(id);
-        Specialty_Doctor medicalSpecialtyDoctor=new Specialty_Doctor(medicalSpecialty,doctorDTO.getId());
-        specialtyDoctorRepository.save(medicalSpecialtyDoctor);
-        return true;
+        Specialty_Doctor medicalSpecialtyDoctor=new Specialty_Doctor(medicalSpecialty, doctorDomain.getId());
+        try{
+            medicalSpecialtyDoctor=specialtyDoctorRepository.save(medicalSpecialtyDoctor);
+            return  medicalSpecialtyDoctor.getId();
+        }catch (DataIntegrityViolationException ex)
+        {
+            return -1L;
+        }
     }
     public Boolean removeDoctor(Long id)
     {
@@ -73,7 +79,6 @@ public class MedicalSpecialtyService {
         specialtyDoctorRepository.delete(medicalSpecialtyDoctor);
         return true;
     }
-    @Deprecated
     public Boolean changeDoctor(Long id, Long idNew)
     {
         MedicalSpecialty medicalSpecialty=getEntity(idNew);
@@ -81,6 +86,15 @@ public class MedicalSpecialtyService {
         specialtyDoctor.setMedicalSpecialty(medicalSpecialty);
         specialtyDoctorRepository.save(specialtyDoctor);
         return true;
+    }
+    public List<MedicalSpecialtyDTO> getAllByDoctorID(Long id)
+    {
+       List<Specialty_Doctor> specialtyDoctors=specialtyDoctorRepository.getAllByDoctorID(id);
+       return specialtyDoctors.stream()
+               .map(x->new MedicalSpecialtyDTO(
+                       x.getMedicalSpecialty()
+               )).
+               toList();
     }
 
 }

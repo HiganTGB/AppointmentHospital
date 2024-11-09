@@ -12,15 +12,15 @@ import java.util.List;
 public class PatientProfile extends BaseEntity {
     @Column(nullable = false,name = "password")
     private String password;
-    @Column(nullable = false,name = "firstName")
-    private String firstName;
+    @Column(nullable = false,name = "fullName")
+    private String fullName;
     @Column(name = "gender",nullable = false)
     private boolean gender;
     @Column(nullable = false,name = "identityCard")
     private String identityCard;
     @Column(nullable = false,name = "phone")
     private String phone;
-    @Column(nullable = false,name = "email")
+    @Column(nullable = true,name = "email")
     private String email;
     @Column(nullable = false,name = "address")
     private String address;

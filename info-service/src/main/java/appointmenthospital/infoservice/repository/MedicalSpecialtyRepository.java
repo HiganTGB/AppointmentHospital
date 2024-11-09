@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MedicalSpecialtyRepository extends JpaRepository<MedicalSpecialty,Long>, QuerydslPredicateExecutor<MedicalSpecialty> {
+
 }

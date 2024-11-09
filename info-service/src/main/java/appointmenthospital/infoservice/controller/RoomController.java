@@ -11,6 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/room")
 @RequiredArgsConstructor
@@ -19,16 +21,16 @@ public class RoomController {
     @GetMapping("/{id}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public RoomDTO get(@PathVariable String id)
+    public RoomDTO get(@PathVariable Long id)
     {
-        return roomService.get(Long.parseLong(id));
+        return roomService.get(id);
     }
     @PutMapping("/{id}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public RoomDTO update(@PathVariable String id, @Valid @RequestBody RoomDTO roomDTO)
+    public RoomDTO update(@PathVariable Long id, @Valid @RequestBody RoomDTO roomDTO)
     {
-        return roomService.update(roomDTO,Long.parseLong(id));
+        return roomService.update(roomDTO,id);
     }
     @PostMapping
     @ResponseBody
@@ -49,6 +51,13 @@ public class RoomController {
         Pageable pageable = PageRequest.of(page, 10, sort); // Assuming a page size of 10
 
         return roomService.getPage(keyword,pageable);
+    }
+    @GetMapping("/list")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<RoomDTO> getAll()
+    {
+        return roomService.getAll();
     }
 
 }

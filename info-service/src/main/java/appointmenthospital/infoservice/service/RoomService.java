@@ -17,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class RoomService {
         }
         MedicalSpecialty medicalSpecialty = getMedical(roomDTO.getMedicalSpecialtyId());
         var room=Room.builder().name(roomDTO.getName()).description(roomDTO.getDescription()).medicalSpecialty(medicalSpecialty).build();
-        return modelMapper.map(roomRepository.save(room),RoomDTO.class);
+        return new RoomDTO(roomRepository.save(room));
     }
     public RoomDTO update(RoomDTO roomDTO,Long id)
     {
@@ -44,12 +46,24 @@ public class RoomService {
         room.setDescription(roomDTO.getDescription());
         MedicalSpecialty medicalSpecialty = getMedical(roomDTO.getMedicalSpecialtyId());
         room.setMedicalSpecialty(medicalSpecialty);
-        return modelMapper.map(roomRepository.save(room),RoomDTO.class);
+        return new RoomDTO(roomRepository.save(room));
     }
+    public List<RoomDTO> getAll()
+    {
+        return roomRepository.findAll().stream().map(RoomDTO::new).toList();
+    }
+
+    public List<RoomDTO> getAllByMedicalSpecialty(Long id)
+    {
+
+        return roomRepository.findAllByMedicalSpecialtyId(id).stream().map(RoomDTO::new).toList();
+    }
+
+
     public Page<RoomDTO> getPage(String keyword,Pageable pageable)
     {
         BooleanExpression expression= room.name.contains(keyword).or(room.medicalSpecialty.name.contains(keyword));
-        return modelMapper.map(roomRepository.findAll(expression,pageable),pageType);
+        return (roomRepository.findAll(expression,pageable).map(RoomDTO::new));
     }
     public RoomDTO get(Long id)
     {

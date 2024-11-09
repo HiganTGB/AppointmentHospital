@@ -1,9 +1,6 @@
 package appointmenthospital.infoservice.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Set;
@@ -19,6 +16,6 @@ public class Room extends BaseEntity{
     private String name;
     @Column(name = "description",nullable = true)
     private String description;
-    @ManyToOne(targetEntity = MedicalSpecialty.class)
+    @ManyToOne(targetEntity = MedicalSpecialty.class,fetch = FetchType.LAZY)
     private MedicalSpecialty medicalSpecialty;
 }

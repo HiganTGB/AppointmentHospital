@@ -1,4 +1,4 @@
-package appointmenthospital.scheduleservice.model;
+package appointmenthospital.scheduleservice.model.entity;
 
 
 import jakarta.persistence.*;

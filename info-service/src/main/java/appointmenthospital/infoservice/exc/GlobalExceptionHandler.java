@@ -1,5 +1,6 @@
 package appointmenthospital.infoservice.exc;
 
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -9,6 +10,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler({PropertyReferenceException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleExceptionProperty(PropertyReferenceException e)
+    {
+        return null;
+    }
     @ExceptionHandler({ ItemNotFoundException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleExceptionA(ItemNotFoundException e) {
