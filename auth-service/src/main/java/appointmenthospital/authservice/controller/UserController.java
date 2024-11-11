@@ -23,19 +23,23 @@ public class UserController {
     @PostMapping("/{id}/lock")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Boolean lock(@PathVariable(name = "id") String id)
+    public Boolean lock(@PathVariable(name = "id") Long id)
     {
-        return service.lock(Long.parseLong(id));
+        return service.lock(id);
     }
     @DeleteMapping("/{id}/lock")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Boolean unlock(@PathVariable(name = "id") String id)
+    public Boolean unlock(@PathVariable(name = "id") Long id)
     {
-        return service.unlock(Long.parseLong(id));
+        return service.unlock(id);
     }
 
-
+    @GetMapping("/{id}")
+    public UserDTO get(@PathVariable(name = "id") Long id)
+    {
+        return service.getDto(id);
+    }
 
     @PatchMapping("/password")
     public ResponseEntity<?> changePassword(

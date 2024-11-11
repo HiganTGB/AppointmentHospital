@@ -27,7 +27,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request->request.requestMatchers("/api/v1/test/demo-controller").hasAuthority("PER_CREATE_FOO").anyRequest().permitAll())
+                .authorizeHttpRequests(request->request
+                        .requestMatchers("/api/v1/test/demo-controller")
+                        .hasAuthority("PER_CREATE_FOO")
+                        .anyRequest()
+                        .permitAll())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

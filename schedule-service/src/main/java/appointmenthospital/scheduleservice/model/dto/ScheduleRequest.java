@@ -1,9 +1,7 @@
 package appointmenthospital.scheduleservice.model.dto;
 
-import appointmenthospital.scheduleservice.model.entity.BaseEntity;
 import appointmenthospital.scheduleservice.model.entity.DayOfWeek;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -13,12 +11,16 @@ import lombok.*;
 @Data
 @Builder
 public class ScheduleRequest {
-    @NotNull
+    @NotNull(message = "doctor_id")
+    @JsonProperty("doctor_id")
     private Long doctorID;
-    @NotNull
+    @NotNull(message = "room_id")
+    @JsonProperty("room_id")
     private Long roomID;
-    @NotNull
-    private Boolean isDay;
-    @NotNull
+    @JsonProperty("at_morning")
+    @NotNull(message = "at_morning")
+    private Boolean atMorning;
+    @NotNull(message = "day of week")
+    @JsonProperty("day_of_week")
     private DayOfWeek dayOfWeek;
 }

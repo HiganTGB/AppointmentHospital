@@ -103,6 +103,7 @@ public class DoctorService {
             try
             {
                 Boolean response_ds =infoServiceClient.remove(ds.getId());
+                doctorSpecialtyRepository.deleteById(ds.getId());
             }catch (FeignException e)
             {
                 throw new AppException("Cannot remove doctor specialty");

@@ -34,7 +34,7 @@ public class UserService {
     private final Type pageType = new TypeToken<Page<UserDTO>>(){}.getType();
     @Value("${application.security.password.default-prefix}")
     private long passwordPrefix;
-  //  @PostConstruct
+   // @PostConstruct
     public void initUser()
     {
         Role role=new Role();

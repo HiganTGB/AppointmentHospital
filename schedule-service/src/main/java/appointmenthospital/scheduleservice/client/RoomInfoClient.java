@@ -1,4 +1,4 @@
-package appointmenthospital.scheduleservice.controller;
+package appointmenthospital.scheduleservice.client;
 
 import appointmenthospital.scheduleservice.model.dto.RoomDTO;
 import org.springframework.cloud.openfeign.FeignClient;

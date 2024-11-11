@@ -1,9 +1,6 @@
 package appointmenthospital.authservice.controller;
 
-import appointmenthospital.authservice.model.dto.DoctorDTO;
-import appointmenthospital.authservice.model.dto.DoctorDomain;
-import appointmenthospital.authservice.model.dto.DoctorFilterRequest;
-import appointmenthospital.authservice.model.dto.DoctorRequest;
+import appointmenthospital.authservice.model.dto.*;
 import appointmenthospital.authservice.service.DoctorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/doctor")
@@ -62,5 +61,10 @@ public class DoctorController {
 
         Pageable pageable = PageRequest.of(page, 10, sort); // Assuming a page size of 10
         return doctorService.getPage(keyword,pageable,request);
+    }
+    @GetMapping("/doctors")
+    public List<DoctorListDTO> getDoctors()
+    {
+        return doctorService.getList();
     }
 }

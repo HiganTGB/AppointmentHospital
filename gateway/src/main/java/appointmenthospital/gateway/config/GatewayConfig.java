@@ -49,9 +49,15 @@ public class GatewayConfig {
                 .route("auth-service", r -> r.path("/api/v1/doctor/**")
                         .filters(f->f.filter(filter))
                         .uri("lb://auth-service"))
+                .route("schedule-service", r -> r.path("/api/v1/schedule/**")
+                        .filters(f->f.filter(filter))
+                        .uri("lb://schedule-service"))
 //                .route("file-storage", r -> r.path("api/v1/file-storage/**")
 //                        .filters(f -> f.filter(filter))
 //                        .uri("lb://file-storage"))
+                .route("auth-service", r -> r.path("api/v1/hospital/**")
+                        // .filters(f -> f.filter(filter))
+                        .uri("lb://auth-service"))
                 .build();
     }
 }

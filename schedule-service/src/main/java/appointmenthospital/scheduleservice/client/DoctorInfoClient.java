@@ -1,4 +1,4 @@
-package appointmenthospital.scheduleservice.controller;
+package appointmenthospital.scheduleservice.client;
 
 import appointmenthospital.scheduleservice.model.dto.DoctorDomain;
 import appointmenthospital.scheduleservice.model.dto.RoomDTO;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@FeignClient(name = "info-service",url = "http://localhost:10001", path = "api/v1/doctor")
+@FeignClient(name = "auth-service",url = "http://localhost:10001", path = "api/v1/doctor")
 public interface DoctorInfoClient {
     @GetMapping("/{id}/domain")
     @ResponseBody
