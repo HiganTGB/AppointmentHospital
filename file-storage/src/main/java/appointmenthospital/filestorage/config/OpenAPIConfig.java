@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@OpenAPIDefinition(info = @Info(title = "Auth Service with User Resource", version = "0.0.1",
-        description = "This is the rest api for auth Service",
+@OpenAPIDefinition(info = @Info(title = "File Storage", version = "0.0.1",
+        description = "This is the rest api for File Storage",
         contact = @Contact(name = "Name Surname")),
         security = {@SecurityRequirement(name = "bearerToken")}
 )
