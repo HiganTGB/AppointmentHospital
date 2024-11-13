@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @FeignClient(name = "auth-service",url = "http://localhost:10001", path = "api/v1/doctors")
 public interface DoctorInfoClient {
-    @GetMapping("/{id}/domain")
+    @GetMapping("/domain/{id}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public DoctorDomain getDomain(@PathVariable Long id);

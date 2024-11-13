@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "info-service",url = "http://localhost:10004", path = "api/v1/specialties")
 public interface InfoServiceClient {
-    @PostMapping("/{id}/add")
+    @PostMapping("/domain/{id}/add")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Long add(@PathVariable Long id, @RequestBody DoctorDomain doctorDomain);
-    @PostMapping("/{id}/remove")
+    @PostMapping("/domain/{id}/remove")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Boolean remove(@PathVariable Long id);

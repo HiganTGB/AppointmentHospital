@@ -17,17 +17,15 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -53,7 +51,7 @@ public class DoctorService {
         var doctor=Doctor.builder()
                 .user(user)
                 .degree(doctorRequest.getDegree())
-                .gender(doctorRequest.isGender())
+                .gender(doctorRequest.getGender())
                 .urlAvatar(imageURL)
                 .build();
 
@@ -74,9 +72,27 @@ public class DoctorService {
         doctorEntity =getEntity(doctorEntity.getId());
         return new DoctorDTO(doctorEntity);
     }
-    public List<DoctorListDTO> getList()
+    public List<DoctorListDTO> getList(String keyword,DoctorFilterRequest filterRequest)
     {
-        return doctorRepository.findAll().stream().map(DoctorListDTO::new).toList();
+        BooleanExpression keywordFilter= doctor.user.firstName.contains(keyword).or(doctor.user.lastName.contains(keyword));
+        BooleanExpression emailFilter=doctor.user.email.like(keyword);
+        BooleanExpression phoneFilter=doctor.user.phone.like(keyword);
+        BooleanExpression specialtyFilter=null;
+        BooleanExpression genderFilter=null;
+        BooleanExpression degreeFilter=null;
+        if(filterRequest!=null)
+        {
+            if (filterRequest.getGender() != null) {
+                genderFilter=doctor.gender.in(filterRequest.getGender());
+            }
+            specialtyFilter=(!filterRequest.getMedicalSpecialtyIdList().isEmpty()) ?
+                    doctor.doctorSpecialties.any().SpecialtyId.in(filterRequest.getMedicalSpecialtyIdList()):null;
+            degreeFilter=(!filterRequest.getDegree().isEmpty())? doctor.degree.in(filterRequest.getDegree()):null;
+        }
+        Predicate predicate=keywordFilter.or(emailFilter).or(phoneFilter).and(genderFilter).and(degreeFilter).and(specialtyFilter);
+        List<DoctorListDTO> dtos=new ArrayList<>();
+        doctorRepository.findAll(predicate).forEach(x->dtos.add(new DoctorListDTO(x)));
+        return dtos;
     }
     public DoctorDTO update(DoctorRequest doctorRequest,MultipartFile file,Long id)
     {
@@ -85,7 +101,7 @@ public class DoctorService {
         User user = modelMapper.map(userDTO,User.class);
         doctorEntity.setUser(user);
         doctorEntity.setDegree(doctorRequest.getDegree());
-        doctorEntity.setGender(doctorRequest.isGender());
+        doctorEntity.setGender(doctorRequest.getGender());
         try
         {
             fileStorageClient.deleteImageFromFileSystem(doctorEntity.getUrlAvatar());
@@ -143,11 +159,7 @@ public class DoctorService {
         if(filterRequest!=null)
         {
             if (filterRequest.getGender() != null) {
-                genderFilter = switch (filterRequest.getGender()) {
-                    case "Female", "FEMALE" -> doctor.gender.isFalse();
-                    case "Male", "MALE" -> doctor.gender.isTrue();
-                    default -> null;
-                };
+                genderFilter=doctor.gender.in(filterRequest.getGender());
             }
             specialtyFilter=(!filterRequest.getMedicalSpecialtyIdList().isEmpty()) ?
                     doctor.doctorSpecialties.any().SpecialtyId.in(filterRequest.getMedicalSpecialtyIdList()):null;

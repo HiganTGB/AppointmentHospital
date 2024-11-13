@@ -19,6 +19,5 @@ public class DoctorDomain {
         this.fullName= doctor.getFullName();
         this.id= doctor.getId();
         this.MedicalSpecialtyIDs=(doctor.getDoctorSpecialties()!=null) ?doctor.getDoctorSpecialties().stream().map(Doctor_Specialty::getSpecialtyId).toList():null;
-
     }
 }

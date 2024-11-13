@@ -1,6 +1,5 @@
 package appointmenthospital.infoservice.service;
 
-import appointmenthospital.infoservice.exc.ItemNotFoundException;
 import appointmenthospital.infoservice.model.dto.DoctorDomain;
 import appointmenthospital.infoservice.model.dto.MedicalSpecialtyDTO;
 import appointmenthospital.infoservice.model.entity.MedicalSpecialty;
@@ -53,13 +52,7 @@ public class MedicalSpecialtyService {
     }
     private MedicalSpecialty getEntity(Long id)
     {
-        try
-        {
             return medicalSpecialtyRepository.getReferenceById(id);
-        }catch (EmptyResultDataAccessException e)
-        {
-            throw new ItemNotFoundException("Medical Specialty with " +id + " not Found");
-        }
     }
     public Long addDoctor(DoctorDomain doctorDomain, Long id)
     {

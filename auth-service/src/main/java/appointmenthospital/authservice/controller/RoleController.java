@@ -2,10 +2,14 @@ package appointmenthospital.authservice.controller;
 
 import appointmenthospital.authservice.model.dto.RoleDTO;
 import appointmenthospital.authservice.model.dto.UserDTO;
+import appointmenthospital.authservice.model.entity.Permission;
 import appointmenthospital.authservice.model.entity.Role;
 import appointmenthospital.authservice.service.RoleService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,14 +17,19 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/roles")
 @RequiredArgsConstructor
+@Tag(name = "Role API", description = "All about Role")
+@Order(5)
 public class RoleController {
     private final RoleService roleService;
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @Operation(summary = "Page", description = "Get page + search by keyword")
     public Page<Role> getAll(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
             @RequestParam(defaultValue = "0",value = "page",required =false)int page,
                                 @RequestParam(value="sortBy" ,required = false,defaultValue = "id") String sortBy,
@@ -51,6 +60,14 @@ public class RoleController {
     public RoleDTO update(@PathVariable Long id,@RequestBody @Valid RoleDTO roleDTO)
     {
         return roleService.update(roleDTO,id);
+    }
+    @GetMapping("/permissions")
+    @Operation(summary = "Permission", description = "Get all permission list")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<Permission> getPermission()
+    {
+        return List.of(Permission.values());
     }
 
 }

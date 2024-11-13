@@ -34,3 +34,21 @@ application:
       default-prefix: 123456
 server:
   port: 10001
+#openapi:
+#  service:
+#    title: auth-service doc
+#    version: 1.0.0
+#    url: http://localhost:9999 #api gateway url
+#springdoc:
+#  api-docs:
+#    path: /auth-service/v3/api-docs
+#  swagger-ui:
+#    path: /auth-service/swagger-ui.html
+springdoc:
+  api-docs:
+    enabled: true
+    path: /auth-service/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /auth-service/swagger-ui.html
+

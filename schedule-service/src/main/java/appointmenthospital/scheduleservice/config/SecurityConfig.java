@@ -22,38 +22,49 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
+    private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**",
+            "/schedule-service/v2/api-docs",
+            "/schedule-service/v3/api-docs",
+            "/schedule-service/v3/api-docs/**",
+            "/schedule-service/swagger-resources",
+            "/schedule-service/swagger-resources/**",
+            "/schedule-service/configuration/ui",
+            "/schedule-service/configuration/security",
+            "/schedule-service/swagger-ui/**",
+            "/schedule-service/webjars/**",
+            "/schedule-service/swagger-ui.html"};
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request->request.requestMatchers("/api/v1/test/demo-controller").hasAuthority("PER_CREATE_FOO")
+                        .requestMatchers(WHITE_LIST_URL).permitAll()
                         .anyRequest()
-                        .permitAll())
+                        .authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers(
-                "/swagger-resources/**",
-                "/swagger-ui.html/**",
-                "/swagger-resources/**",
-                "/swagger-ui/**",
-                "/v3/api-docs/**");
-    }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(@NonNull CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedMethods("*");
-            }
-        };
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return (web) -> web.ignoring().requestMatchers(
+//                "/swagger-resources/**",
+//                "/swagger-ui.html/**",
+//                "/swagger-resources/**",
+//                "/swagger-ui/**",
+//                "/v3/api-docs/**");
+//    }
+//
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(@NonNull CorsRegistry registry) {
+//                registry.addMapping("/**")
+//                        .allowedMethods("*");
+//            }
+//        };
+//    }
 }

@@ -4,6 +4,8 @@ import appointmenthospital.scheduleservice.model.dto.ScheduleDTO;
 import appointmenthospital.scheduleservice.model.dto.ScheduleRequest;
 import appointmenthospital.scheduleservice.model.entity.Schedule;
 import appointmenthospital.scheduleservice.service.ScheduleService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,12 +15,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/schedule")
+@Tag(name = "Schedule API", description = "All about schedule")
 @RequiredArgsConstructor
 public class ScheduleController {
     private final ScheduleService scheduleService;
     @PostMapping
     @ResponseBody
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public ScheduleDTO create(@Valid @RequestBody ScheduleRequest scheduleRequest)
     {
         return scheduleService.create(scheduleRequest);
@@ -33,6 +36,7 @@ public class ScheduleController {
     @GetMapping("/room/{id}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get schedule by Room", description = "Get all schedule from monday to sunday,morning or evening by room")
     public List<ScheduleDTO> getByRoom(@PathVariable Long id) {
         return scheduleService.getByRoom(id);
     }

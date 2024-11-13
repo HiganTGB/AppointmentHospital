@@ -4,6 +4,7 @@ import appointmenthospital.authservice.auth.AuthenticationService;
 import appointmenthospital.authservice.log.CustomLogger;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -43,6 +44,18 @@ public class GlobalExceptionHandler {
         if (e.getBindingResult().hasErrors())
             e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
         return e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+    }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleNumberException(DataIntegrityViolationException e) {
+        return e.getMessage();
+    }
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<?> handleEntityNotFound(EntityNotFoundException ex)
+    {
+        logger.log(ex.getCause().toString(),ex.getMessage());
+        return null;
     }
     @ExceptionHandler( BadCredentialsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

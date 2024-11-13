@@ -34,19 +34,20 @@ public class ScheduleService {
             try
             {
                 DoctorDomain doctor= doctorInfoClient.getDomain(request.getDoctorID());
-                RoomDTO roomDTO=roomInfoClient.get(request.getRoomID());
+                RoomDTO roomDTO=roomInfoClient.getDomain(request.getRoomID());
             if(!doctor.getMedicalSpecialtyIDs().contains(roomDTO.getMedicalSpecialtyId()))
             {
                 customLogger.log(doctor.toString(),roomDTO.toString());
-                throw new IllegalStateException("Wrong specialty 1");
+                throw new IllegalStateException("Wrong specialty");
             }
             if(scheduleRepository.existsByRoomIDAndAtMorningAndDayOfWeek(roomDTO.getId(), request.getAtMorning(), request.getDayOfWeek()))
             {
-                throw new IllegalStateException("Wrong specialty 2");
+
+                throw new IllegalStateException("Schedule exists by room with id: "+roomDTO.getId() );
             }
             if(scheduleRepository.existsByDoctorIDAndAtMorningAndDayOfWeek(doctor.getId(), request.getAtMorning(),request.getDayOfWeek()))
             {
-                throw new IllegalStateException("Wrong specialty 3");
+                throw new IllegalStateException("Schedule exists by doctor with id: "+doctor.getId());
             }
             var schedule=Schedule.builder()
                     .roomID(roomDTO.getId())
@@ -66,18 +67,20 @@ public class ScheduleService {
         try
         {
             DoctorDomain doctor= doctorInfoClient.getDomain(request.getDoctorID());
-            RoomDTO roomDTO=roomInfoClient.get(request.getRoomID());
+            RoomDTO roomDTO=roomInfoClient.getDomain(request.getRoomID());
             if(!doctor.getMedicalSpecialtyIDs().contains(roomDTO.getMedicalSpecialtyId()))
             {
+                customLogger.log(doctor.toString(),roomDTO.toString());
                 throw new IllegalStateException("Wrong specialty");
             }
             if(scheduleRepository.existsByRoomIDAndAtMorningAndDayOfWeek(roomDTO.getId(), request.getAtMorning(), request.getDayOfWeek()))
             {
-                throw new IllegalStateException("Wrong specialty");
+
+                throw new IllegalStateException("Schedule exists by room with id: "+roomDTO.getId() );
             }
             if(scheduleRepository.existsByDoctorIDAndAtMorningAndDayOfWeek(doctor.getId(), request.getAtMorning(),request.getDayOfWeek()))
             {
-                throw new IllegalStateException("Wrong specialty");
+                throw new IllegalStateException("Schedule exists by doctor with id: "+doctor.getId());
             }
             schedule.setDoctorID(doctor.getId());
             schedule.setAtMorning(request.getAtMorning());

@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @FeignClient(name = "info-service",url = "http://localhost:10004", path = "api/v1/rooms")
 public interface RoomInfoClient {
-    @GetMapping("/{id}")
+    @GetMapping("/domain/{id}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public RoomDTO get(@PathVariable Long id);
+    public RoomDTO getDomain(@PathVariable Long id);
 }

@@ -2,6 +2,9 @@ package appointmenthospital.infoservice.controller;
 
 import appointmenthospital.infoservice.model.dto.RoomDTO;
 import appointmenthospital.infoservice.service.RoomService;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,12 +19,21 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/rooms")
 @RequiredArgsConstructor
+@Tag(name = "Room API", description = "All about rooms")
 public class RoomController {
     private final RoomService roomService;
     @GetMapping("/{id}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public RoomDTO get(@PathVariable Long id)
+    {
+        return roomService.get(id);
+    }
+    @GetMapping("/domain/{id}")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    @Hidden
+    public RoomDTO getDomain(@PathVariable Long id)
     {
         return roomService.get(id);
     }
@@ -52,7 +64,8 @@ public class RoomController {
 
         return roomService.getPage(keyword,pageable);
     }
-    @GetMapping("/list")
+    @Operation(summary = "Get room list", description = "Get Rooms list",tags = {"Public API"})
+    @GetMapping("public/list")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<RoomDTO> getAll()

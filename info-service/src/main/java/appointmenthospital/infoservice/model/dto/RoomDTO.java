@@ -1,6 +1,7 @@
 package appointmenthospital.infoservice.model.dto;
 
 import appointmenthospital.infoservice.model.entity.Room;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -17,8 +18,10 @@ public class RoomDTO {
 
     private String description;
     @NotNull(message = "Medical Specialty is required")
+    @JsonProperty("specialty_id")
     private Long medicalSpecialtyId;
     @Null
+    @JsonProperty("specialty_info")
     private MedicalSpecialtyDTO medicalSpecialty;
     public RoomDTO(Room room)
     {

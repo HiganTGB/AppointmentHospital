@@ -18,7 +18,8 @@ public class Doctor extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Degree degree;
     @Column(nullable = false)
-    private boolean gender;
+    @Enumerated(value = EnumType.STRING)
+    private Gender gender;
     @OneToOne(fetch = FetchType.EAGER)
     private User user;
     @Column(nullable = true)

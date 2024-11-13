@@ -1,6 +1,5 @@
 package appointmenthospital.infoservice.service;
 
-import appointmenthospital.infoservice.exc.ItemNotFoundException;
 import appointmenthospital.infoservice.model.dto.RoomDTO;
 import appointmenthospital.infoservice.model.entity.MedicalSpecialty;
 import appointmenthospital.infoservice.model.entity.QRoom;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -71,23 +69,15 @@ public class RoomService {
     }
     private Room getEntity(Long id)
     {
-        try
-        {
+
             return roomRepository.getReferenceById(id);
-        }catch (EmptyResultDataAccessException e)
-        {
-            throw new ItemNotFoundException("Medical Specialty with " +id + " not Found");
-        }
+
     }
     private MedicalSpecialty getMedical(Long id)
     {
-        try
-        {
+
             return medicalSpecialtyRepository.getReferenceById(id);
-        }catch (EmptyResultDataAccessException e)
-        {
-            throw new ItemNotFoundException("Medical Specialty with " +id + " not Found");
-        }
+
 
     }
 

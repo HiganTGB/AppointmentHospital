@@ -11,6 +11,23 @@ spring:
   name: api-gateway
  cloud:
   gateway:
+   routes:
+    - id: auth-service
+      predicates:
+       - Path=/auth-service/**
+      uri: http://localhost:10001
+    - id: info-service
+      predicates:
+        - Path=/info-service/**
+      uri: http://localhost:10004
+    - id: schedule-service
+      predicates:
+        - Path=/schedule-service/**
+      uri: http://localhost:10002
+    - id: file-storage
+      predicates:
+        - Path=/file-storage/**
+      uri: http://localhost:10003
    globalcors:
     cors-configurations:
      '[/**]':
@@ -27,3 +44,21 @@ application:
  security:
   jwt:
    secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+springdoc:
+ api-docs:
+  enabled: true
+  path: /v3/api-docs
+ swagger-ui:
+  enabled: true
+  config-url: /v3/api-docs/swagger-config
+  urls:
+   -   name: gateway-service
+       url: /v3/api-docs
+   -  name: auth-service
+      url: /auth-service/v3/api-docs
+   -  name: info-service
+      url: /info-service/v3/api-docs
+   - name: schedule-service
+     url: /schedule-service/v3/api-docs
+   - name: file-storage
+     url: /file-storage/v3/api-docs

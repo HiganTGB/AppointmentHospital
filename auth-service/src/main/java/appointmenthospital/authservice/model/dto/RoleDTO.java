@@ -2,18 +2,23 @@ package appointmenthospital.authservice.model.dto;
 
 import appointmenthospital.authservice.model.entity.Permission;
 import appointmenthospital.authservice.model.entity.Role;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 @Data
 public class RoleDTO {
     private Long id;
+    @NotBlank(message = "Name is required")
 
     private String name;
 
     private String description;
-    private List<Permission> permissions;
+    @JsonProperty("permissions")
+    private List<Permission> permissions=new ArrayList<>();
     public RoleDTO(Role role)
     {
         this.id=role.getId();

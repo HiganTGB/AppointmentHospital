@@ -37,3 +37,10 @@ application:
       secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
 server:
   port: 10002
+springdoc:
+  api-docs:
+    enabled: true
+    path: /schedule-service/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /schedule-service/swagger-ui.html

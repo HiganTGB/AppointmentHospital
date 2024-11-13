@@ -1,6 +1,7 @@
 package appointmenthospital.filestorage.controller;
 
 import appointmenthospital.filestorage.service.StorageService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/file-storage")
 @RequiredArgsConstructor
+@Tag(name = "File Storage API", description = "All about image")
 public class StorageController {
     private final StorageService storageService;
 

@@ -1,5 +1,7 @@
 package appointmenthospital.infoservice.exc;
 
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +18,11 @@ public class GlobalExceptionHandler {
     {
         return null;
     }
-    @ExceptionHandler({ ItemNotFoundException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleExceptionA(ItemNotFoundException e) {
-        return e.getMessage();
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<?> handleEntityNotFound(EntityNotFoundException ex)
+    {
+        return null;
     }
     @ExceptionHandler({ IllegalStateException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -37,6 +40,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleNumberException(NumberFormatException e) {
         return null;
+    }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleNumberException(DataIntegrityViolationException e) {
+        return e.getMessage();
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleUnwantedException(Exception e) {

@@ -3,6 +3,8 @@ package appointmenthospital.authservice.model.dto;
 
 import appointmenthospital.authservice.model.entity.Degree;
 import appointmenthospital.authservice.model.entity.Doctor;
+import appointmenthospital.authservice.model.entity.Gender;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -14,7 +16,8 @@ public class DoctorDTO {
 
     private Degree degree;
 
-    private boolean gender;
+    private Gender gender;
+    @JsonProperty("avatar")
     private String urlAvatar;
     private Timestamp createAt;
     private Timestamp updateAt;
@@ -22,7 +25,7 @@ public class DoctorDTO {
     {
         this.id= doctor.getId();
         this.degree=doctor.getDegree();
-        this.gender=doctor.isGender();
+        this.gender=doctor.getGender();
         this.createAt=doctor.getCreateAt();
         this.updateAt=doctor.getUpdateAt();
         this.urlAvatar=doctor.getUrlAvatar();
