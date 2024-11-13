@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@FeignClient(name = "auth-service",url = "http://localhost:10001", path = "api/v1/doctor")
+@FeignClient(name = "auth-service",url = "http://localhost:10001", path = "api/v1/doctors")
 public interface DoctorInfoClient {
     @GetMapping("/{id}/domain")
     @ResponseBody

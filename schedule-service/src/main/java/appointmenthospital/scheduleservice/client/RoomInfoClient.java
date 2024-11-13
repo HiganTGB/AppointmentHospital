@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@FeignClient(name = "info-service",url = "http://localhost:10004", path = "api/v1/room")
+@FeignClient(name = "info-service",url = "http://localhost:10004", path = "api/v1/rooms")
 public interface RoomInfoClient {
     @GetMapping("/{id}")
     @ResponseBody

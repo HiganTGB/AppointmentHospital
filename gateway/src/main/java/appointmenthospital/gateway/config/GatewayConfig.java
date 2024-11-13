@@ -17,47 +17,44 @@ public class GatewayConfig {
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
-//                .route("user-service", r -> r.path("api/v1/user/**")
-//                        .filters(f -> f.filter(filter))
-//                        .uri("lb://user-service"))
-//                .route("info-service", r -> r.path("api/v1/info-service/**")
-//                        .filters(f -> f.filter(filter))
-//                        .uri("lb://job-service"))
-//                .route("job-service", r -> r.path("api/v1/appointment-service/**")
-//                        .filters(f -> f.filter(filter))
-//                        .uri("lb://appointment-service"))
                 .route("test-service", r -> r.path("/api/v1/test/**")
                         .filters(f -> f.filter(filter))
                         .uri("lb://info-service"))
-//                .route("notification-service", r -> r.path("api/v1/notification/**")
-//                        .filters(f -> f.filter(filter))
-//                        .uri("lb://notification-service"))
-//
+
+
+
+                // Auth-Service
                 .route("auth-service", r -> r.path("/api/v1/auth/**")
                         .uri("lb://auth-service"))
-                .route("auth-service", r -> r.path("/api/v1/info/**")
+                .route("auth-service", r -> r.path("/api/v1/users/**")
                         .uri("lb://auth-service"))
-                .route("info-service", r -> r.path("/api/v1/specialty/**")
+                .route("auth-service", r -> r.path("/api/v1/customers/**")
+                        .uri("lb://auth-service"))
+                .route("auth-service", r -> r.path("/api/v1/doctors/**")
+                        .uri("lb://auth-service"))
+                .route("auth-service", r -> r.path("/api/v1/hospitals/**")
+                        .uri("lb://auth-service"))
+                  //
+                // Info Service
+
+                .route("info-service", r -> r.path("/api/v1/specialties/**")
                         .filters(f -> f.filter(filter))
                         .uri("lb://info-service"))
-                .route("info-service", r -> r.path("/api/v1/room/**")
+                .route("info-service", r -> r.path("/api/v1/rooms/**")
                         .filters(f -> f.filter(filter))
                         .uri("lb://info-service"))
+                //
+
+
                 .route("file-storage", r -> r.path("api/v1/file-storage/**")
                        // .filters(f -> f.filter(filter))
                         .uri("lb://file-storage"))
-                .route("auth-service", r -> r.path("/api/v1/doctor/**")
-                        .filters(f->f.filter(filter))
-                        .uri("lb://auth-service"))
+
+                // Schedule Service
                 .route("schedule-service", r -> r.path("/api/v1/schedule/**")
                         .filters(f->f.filter(filter))
                         .uri("lb://schedule-service"))
-//                .route("file-storage", r -> r.path("api/v1/file-storage/**")
-//                        .filters(f -> f.filter(filter))
-//                        .uri("lb://file-storage"))
-                .route("auth-service", r -> r.path("api/v1/hospital/**")
-                        // .filters(f -> f.filter(filter))
-                        .uri("lb://auth-service"))
+
                 .build();
     }
 }

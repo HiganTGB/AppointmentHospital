@@ -1,8 +1,12 @@
 package appointmenthospital.appointmentservice.model.dto;
 
 import appointmenthospital.appointmentservice.model.entity.PatientProfile;
-import jakarta.persistence.Column;
+import appointmenthospital.appointmentservice.model.entity.PatientProfile_Account;
 import lombok.Data;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Data
 public class PatientDTO {
@@ -17,8 +21,6 @@ public class PatientDTO {
 
     private String email;
     private String address;
-
-    private Long account_id;
 
     private String patient_id;
     public PatientDTO(PatientProfile profile)

@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "info-service",url = "http://localhost:10004", path = "api/v1/specialty")
+@FeignClient(name = "info-service",url = "http://localhost:10004", path = "api/v1/specialties")
 public interface InfoServiceClient {
     @PostMapping("/{id}/add")
     @ResponseStatus(HttpStatus.OK)

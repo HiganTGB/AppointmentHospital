@@ -4,10 +4,12 @@ import appointmenthospital.authservice.exc.AppException;
 import appointmenthospital.authservice.model.dto.ChangePasswordRequest;
 import appointmenthospital.authservice.model.dto.UserDTO;
 import appointmenthospital.authservice.model.dto.UserRequest;
+import appointmenthospital.authservice.model.entity.QUser;
 import appointmenthospital.authservice.model.entity.Role;
 import appointmenthospital.authservice.model.entity.User;
 import appointmenthospital.authservice.repository.RoleRepository;
 import appointmenthospital.authservice.repository.UserRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.MappingException;
@@ -31,6 +33,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
+    private final QUser user=QUser.user;
     private final Type pageType = new TypeToken<Page<UserDTO>>(){}.getType();
     @Value("${application.security.password.default-prefix}")
     private long passwordPrefix;
@@ -128,18 +131,16 @@ public class UserService {
         {
             throw new AppException("User with " + id +" not found");
         }
-
     }
     public Page<UserDTO> getPage(Pageable pageable)
     {
       return   modelMapper.map(userRepository.findAll(pageable),pageType);
     }
-    public Page<UserDTO> getPage(Pageable pageable, boolean isStaff)
+    public Page<UserDTO> getPage(Pageable pageable, boolean isStaff,String keyword)
     {
-
-        return (isStaff)? modelMapper.map(userRepository.findAllByIsStaffTrue(pageable),pageType)
-                :
-                modelMapper.map(userRepository.findAllByIsStaffFalse(pageable),pageType);
+        BooleanExpression byName=user.firstName.contains(keyword).or(user.lastName.contains(keyword));
+        BooleanExpression byStaff=(isStaff)? user.isStaff.isTrue():user.isStaff.isFalse();
+        return modelMapper.map(userRepository.findAll(byName.and(byStaff),pageable),pageType);
     }
 
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
@@ -160,6 +161,23 @@ public class UserService {
 
         // save the new password
         userRepository.save(user);
+    }
+    public UserDTO update(UserRequest userDto,Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        User old=get(user.getId());
+        old.setFirstName(userDto.getFirstName());
+        old.setLastName(userDto.getLastName());
+        if(phoneExist(userDto.getPhone(),old.getPhone()))
+        {
+            throw new IllegalStateException("Phone already exists");
+        }
+        if(emailExist(userDto.getEmail(),old.getEmail()))
+        {
+            throw new IllegalStateException("Email already exists");
+        }
+        old.setPhone(userDto.getPhone());
+        old.setEmail(userDto.getEmail());
+        return modelMapper.map(userRepository.save(old),UserDTO.class) ;
     }
     private boolean emailExist(String email) {
         return userRepository.existsByEmail(email);

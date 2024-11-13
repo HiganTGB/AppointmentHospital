@@ -53,7 +53,7 @@ public class SecurityConfiguration {
                                 .permitAll()
                                 .requestMatchers(OPEN_FEIGN_URL)
                                 .permitAll()
-                                .requestMatchers("/api/v1/hospital/**").permitAll()
+                                .requestMatchers("/api/v1/hospitals/**").permitAll()
 //                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
 //                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
 //                                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())

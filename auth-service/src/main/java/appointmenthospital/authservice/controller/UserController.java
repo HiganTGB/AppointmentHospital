@@ -2,7 +2,9 @@ package appointmenthospital.authservice.controller;
 
 import appointmenthospital.authservice.model.dto.ChangePasswordRequest;
 import appointmenthospital.authservice.model.dto.UserDTO;
+import appointmenthospital.authservice.model.dto.UserRequest;
 import appointmenthospital.authservice.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
@@ -48,5 +50,10 @@ public class UserController {
     ) {
         service.changePassword(request, connectedUser);
         return ResponseEntity.ok().build();
+    }
+    @PutMapping("/my-profile")
+    public UserDTO update(Principal connectedUser, @Valid @RequestBody UserRequest userRequest)
+    {
+            return service.update(userRequest,connectedUser);
     }
 }

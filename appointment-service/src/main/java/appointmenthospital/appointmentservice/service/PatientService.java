@@ -5,20 +5,32 @@ import appointmenthospital.appointmentservice.model.dto.PatientDTO;
 import appointmenthospital.appointmentservice.model.dto.User;
 import appointmenthospital.appointmentservice.model.dto.UserDTO;
 import appointmenthospital.appointmentservice.model.entity.PatientProfile;
+import appointmenthospital.appointmentservice.model.entity.PatientProfile_Account;
+import appointmenthospital.appointmentservice.model.entity.QPatientProfile;
 import appointmenthospital.appointmentservice.repository.PatientRepository;
+import appointmenthospital.appointmentservice.repository.Patient_accountRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import feign.FeignException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PatientService {
         private UserServiceClient userServiceClient;
         private final PatientRepository patientRepository;
-        public PatientDTO create(PatientDTO patientDTO,Principal connectedUser)
+        private final Patient_accountRepository patientAccountRepository;
+        private final QPatientProfile patientProfile= QPatientProfile.patientProfile;
+        public PatientDTO create(PatientDTO patientDTO, Principal connectedUser)
         {
             var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
             try
@@ -35,16 +47,17 @@ public class PatientService {
                         .gender(patientDTO.isGender())
                         .identityCard(patientDTO.getIdentityCard())
                         .fullName(patientDTO.getFullName())
-                        .account_id(userDTO.getId())
                         .patientUUID(null)
                         .build();
-                return new PatientDTO(patientRepository.save(patient));
+                PatientProfile profile=patientRepository.save(patient);
+                patientAccountRepository.save(new PatientProfile_Account(userDTO.getId(), profile));
+                return new PatientDTO(profile);
             }catch (FeignException e)
             {
                 throw new IllegalStateException("User cannot found");
             }
         };
-    public PatientDTO create(String patientUUID,Principal connectedUser)
+    public PatientDTO create(String patientUUID, Principal connectedUser)
     {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         try
@@ -54,28 +67,19 @@ public class PatientService {
             {
                 throw new IllegalStateException("This is staff");
             }
-            PatientProfile patientDTO=patientRepository.getFirstByPatientUUID(patientUUID);
-            if(patientRepository.existsByPatientUUIDAndAccount_id(patientUUID,userDTO.getId()))
+            PatientProfile profile=patientRepository.getFirstByPatientUUID(patientUUID);
+            if(patientAccountRepository.existsByAccountIDAndPatientId(userDTO.getId(),profile.getId()))
             {
                 throw new IllegalStateException("Exist");
             }
-            var profile= PatientProfile.builder()
-                    .address(patientDTO.getAddress())
-                    .phone(patientDTO.getPhone())
-                    .email(patientDTO.getEmail())
-                    .gender(patientDTO.isGender())
-                    .identityCard(patientDTO.getIdentityCard())
-                    .fullName(patientDTO.getFullName())
-                    .account_id(userDTO.getId())
-                    .patientUUID(patientUUID)
-                    .build();
-            return new PatientDTO(patientRepository.save(profile));
+            patientAccountRepository.save(new PatientProfile_Account(userDTO.getId(), profile));
+            return new PatientDTO(profile);
         }catch (FeignException e)
         {
             throw new IllegalStateException("User cannot found");
         }
     };
-    public PatientDTO updateByCustomer(PatientDTO patientDTO,Long id)
+    public PatientDTO updateByCustomer(PatientDTO patientDTO, Long id)
     {
         try
         {   PatientProfile profile=patientRepository.getReferenceById(id);
@@ -95,7 +99,7 @@ public class PatientService {
             throw new IllegalStateException("User cannot found");
         }
     };
-    public PatientDTO update(PatientDTO patientDTO,Long id)
+    public PatientDTO update(PatientDTO patientDTO, Long id)
     {
         try
         {   PatientProfile profile=patientRepository.getReferenceById(id);
@@ -112,7 +116,7 @@ public class PatientService {
             throw new IllegalStateException("User cannot found");
         }
     }
-    public PatientDTO updateUUID(String UUID,Long id)
+    public PatientDTO updateUUID(String UUID, Long id)
     {
         try
         {   PatientProfile profile=patientRepository.getReferenceById(id);
@@ -129,5 +133,21 @@ public class PatientService {
         {
             throw new IllegalStateException("User cannot found");
         }
+    }
+    public List<PatientDTO> getAllByAccountID(Long id)
+    {
+        List<PatientDTO> patientDTOS=new ArrayList<>();
+        BooleanExpression byAccount=patientProfile.patientProfile_accounts.any().accountID.eq(id);
+        patientRepository.findAll(byAccount).forEach(x-> patientDTOS.add(new PatientDTO(x)));
+        return patientDTOS;
+    }
+    public Page<PatientDTO> getPage(String keyword, Pageable pageable)
+    {
+        BooleanExpression byName=patientProfile.fullName.contains(keyword);
+        return patientRepository.findAll(byName,pageable).map(PatientDTO::new);
+    }
+    public PatientDTO get(Long id)
+    {
+        return new PatientDTO(patientRepository.getReferenceById(id));
     }
 }

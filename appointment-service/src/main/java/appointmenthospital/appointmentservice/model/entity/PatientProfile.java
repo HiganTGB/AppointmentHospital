@@ -2,6 +2,7 @@ package appointmenthospital.appointmentservice.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.ws.rs.core.Link;
 import lombok.*;
@@ -28,10 +29,10 @@ public class PatientProfile extends BaseEntity {
     private String email;
     @Column(nullable = false,name = "address")
     private String address;
-    @Column(nullable = true,name = "account_id",updatable = false)
-    private Long account_id;
     @OneToMany(mappedBy = "patientProfile",targetEntity = Examination.class)
     private List<Examination> examinations;
     @Column(nullable = true)
     private String patientUUID;
+    @OneToMany(mappedBy = "patient",targetEntity = PatientProfile_Account.class,fetch = FetchType.LAZY)
+    private List<PatientProfile_Account> patientProfile_accounts;
 }

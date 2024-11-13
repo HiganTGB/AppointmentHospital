@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/doctor")
+@RequestMapping("api/v1/doctors")
 @RequiredArgsConstructor
 public class DoctorController {
     private final DoctorService doctorService;
