@@ -46,7 +46,7 @@ public class GatewayConfig {
                 //
 
 
-                .route("file-storage", r -> r.path("api/v1/file-storage/**")
+                .route("file-storage", r -> r.path("/api/v1/file-storage/**")
                        // .filters(f -> f.filter(filter))
                         .uri("lb://file-storage"))
 
