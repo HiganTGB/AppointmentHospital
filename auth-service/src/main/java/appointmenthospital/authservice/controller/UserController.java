@@ -6,6 +6,7 @@ import appointmenthospital.authservice.model.dto.UserRequest;
 import appointmenthospital.authservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.TypeToken;
@@ -60,5 +61,10 @@ public class UserController {
             Principal connectedUser)
     {
             return service.update(userRequest,connectedUser);
+    }
+    @PostMapping("/resetPassword")
+    public void resetPassword(HttpServletRequest request,
+                              @RequestParam("phone") String phone) {
+
     }
 }

@@ -1,7 +1,6 @@
 package appointmenthospital.scheduleservice.client;
 
-import appointmenthospital.scheduleservice.model.dto.DoctorDomain;
-import appointmenthospital.scheduleservice.model.dto.RoomDTO;
+import appointmenthospital.scheduleservice.model.domain.DoctorDomain;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;

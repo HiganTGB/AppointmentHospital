@@ -1,5 +1,6 @@
 package appointmenthospital.authservice.repository;
 
+import appointmenthospital.authservice.model.entity.PasswordResetToken;
 import appointmenthospital.authservice.model.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @EnableJpaRepositories
 public interface UserRepository extends JpaRepository<User, Long>, QuerydslPredicateExecutor<User> {
     Optional<User> findByPhone(String phone );
+    Optional<User> findByPasswordResetToken(PasswordResetToken token);
     Page<User> findAllByIsStaffFalse(Pageable pageable);
     Page<User> findAllByIsStaffTrue(Pageable pageable);
 

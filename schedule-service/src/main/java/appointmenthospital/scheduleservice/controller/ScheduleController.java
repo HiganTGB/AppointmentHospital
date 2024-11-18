@@ -1,7 +1,9 @@
 package appointmenthospital.scheduleservice.controller;
 
+import appointmenthospital.scheduleservice.model.dto.AvailableDateDTO;
 import appointmenthospital.scheduleservice.model.dto.ScheduleDTO;
 import appointmenthospital.scheduleservice.model.dto.ScheduleRequest;
+import appointmenthospital.scheduleservice.model.entity.DayOfWeek;
 import appointmenthospital.scheduleservice.model.entity.Schedule;
 import appointmenthospital.scheduleservice.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,4 +49,32 @@ public class ScheduleController {
     {
         return scheduleService.delete(id);
     }
+
+    @GetMapping("/domain/{id}")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public ScheduleDTO get(@PathVariable Long id)
+    {
+        return scheduleService.getDomain(id);
+    }
+
+    @GetMapping("/public/available")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get Available Date by specialty", description = "Get all Available Date from monday to sunday by specialty",tags = {"Public"})
+    public List<AvailableDateDTO> getBySpecialty( @RequestParam(value = "specialty", required = true) Long specialtyID)
+    {
+        return scheduleService.getAvailableDateBySpecialty(specialtyID);
+    }
+    @GetMapping("/public/schedule")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get schedule by date,specialty", description = "Get all Available Date from monday to sunday by specialty",tags = {"Public"})
+    public List<ScheduleDTO> getByDayAndSpecialty(@RequestParam(value = "dayofweek", required = true) int dayOfWeek,
+                                                  @RequestParam(value = "specialty", required = true) Long specialtyID)
+    {
+        return scheduleService.getBySpecialtyAndDayOfWeek(specialtyID, DayOfWeek.getDayOfWeekFromInt(dayOfWeek));
+    }
+
+
 }

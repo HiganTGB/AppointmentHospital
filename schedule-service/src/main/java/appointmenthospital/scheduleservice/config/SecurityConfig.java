@@ -39,6 +39,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request->request.requestMatchers("/api/v1/test/demo-controller").hasAuthority("PER_CREATE_FOO")
                         .requestMatchers(WHITE_LIST_URL).permitAll()
+                        .requestMatchers("/api/v1/schedule/domain/**").permitAll()
+                        .requestMatchers("/api/v1/schedule/rooms/**").permitAll()
                         .anyRequest()
                         .authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)

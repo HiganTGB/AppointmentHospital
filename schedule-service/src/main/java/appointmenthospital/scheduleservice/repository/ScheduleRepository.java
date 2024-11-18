@@ -14,4 +14,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule,Long>, Queryd
     Boolean existsByDoctorIDAndAtMorningAndDayOfWeek(Long doctor_id, boolean isDay, DayOfWeek dayOfWeek);
     List<Schedule> getAllByRoomID(Long room_id);
     Schedule findFirstByRoomIDAndDayOfWeekAndAtMorning(Long room_id,DayOfWeek dayOfWeek,boolean atMorning);
+
+    Boolean existsByRoomIDInAndDayOfWeek(List<Long> room_id,DayOfWeek dayOfWeek);
+    List<Schedule> findAllByRoomIDInAndDayOfWeek(List<Long> room_id,DayOfWeek dayOfWeek);
+
 }

@@ -1,6 +1,7 @@
 package appointmenthospital.infoservice.controller;
 
 import appointmenthospital.infoservice.model.dto.RoomDTO;
+import appointmenthospital.infoservice.model.dto.RoomDomain;
 import appointmenthospital.infoservice.service.RoomService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,9 +34,9 @@ public class RoomController {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     @Hidden
-    public RoomDTO getDomain(@PathVariable Long id)
+    public RoomDomain getDomain(@PathVariable Long id)
     {
-        return roomService.get(id);
+        return roomService.getDomain(id);
     }
     @PutMapping("/{id}")
     @ResponseBody
@@ -65,12 +66,21 @@ public class RoomController {
         return roomService.getPage(keyword,pageable);
     }
     @Operation(summary = "Get room list", description = "Get Rooms list",tags = {"Public API"})
-    @GetMapping("public/list")
+    @GetMapping("/public/list")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<RoomDTO> getAll()
     {
         return roomService.getAll();
+    }
+
+    @GetMapping("/domain/{id}/rooms")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @Operation(summary = "Get Rooms", description = "Get all room by specialties",tags = {"Public API"})
+    public List<RoomDomain> getRooms(@PathVariable Long id)
+    {
+        return roomService.getAllByMedicalSpecialty(id);
     }
 
 }

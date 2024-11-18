@@ -1,6 +1,6 @@
 package appointmenthospital.appointmentservice.service;
 
-import appointmenthospital.appointmentservice.client.UserServiceClient;
+import appointmenthospital.appointmentservice.client.AuthServiceClient;
 import appointmenthospital.appointmentservice.model.dto.PatientDTO;
 import appointmenthospital.appointmentservice.model.dto.User;
 import appointmenthospital.appointmentservice.model.dto.UserDTO;
@@ -13,6 +13,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import feign.FeignException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,7 +28,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class PatientService {
-        private UserServiceClient userServiceClient;
+        @Autowired
+        private AuthServiceClient authServiceClient;
         private final PatientRepository patientRepository;
         private final Patient_accountRepository patientAccountRepository;
         private final QPatientProfile patientProfile= QPatientProfile.patientProfile;
@@ -35,7 +38,7 @@ public class PatientService {
             var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
             try
             {
-                UserDTO userDTO= userServiceClient.get(user.getId());
+                UserDTO userDTO= authServiceClient.get(user.getId());
                 if(userDTO.getIsStaff())
                 {
                     throw new IllegalStateException("This is staff");
@@ -44,10 +47,9 @@ public class PatientService {
                         .address(patientDTO.getAddress())
                         .phone(patientDTO.getPhone())
                         .email(patientDTO.getEmail())
-                        .gender(patientDTO.isGender())
+                        .gender(patientDTO.getGender())
                         .identityCard(patientDTO.getIdentityCard())
                         .fullName(patientDTO.getFullName())
-                        .patientUUID(null)
                         .build();
                 PatientProfile profile=patientRepository.save(patient);
                 patientAccountRepository.save(new PatientProfile_Account(userDTO.getId(), profile));
@@ -57,17 +59,17 @@ public class PatientService {
                 throw new IllegalStateException("User cannot found");
             }
         };
-    public PatientDTO create(String patientUUID, Principal connectedUser)
+    public PatientDTO create(String id, Principal connectedUser)
     {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         try
         {
-            UserDTO userDTO= userServiceClient.get(user.getId());
+            UserDTO userDTO= authServiceClient.get(user.getId());
             if(userDTO.getIsStaff())
             {
                 throw new IllegalStateException("This is staff");
             }
-            PatientProfile profile=patientRepository.getFirstByPatientUUID(patientUUID);
+            PatientProfile profile=patientRepository.getReferenceById(id);
             if(patientAccountRepository.existsByAccountIDAndPatientId(userDTO.getId(),profile.getId()))
             {
                 throw new IllegalStateException("Exist");
@@ -79,60 +81,55 @@ public class PatientService {
             throw new IllegalStateException("User cannot found");
         }
     };
-    public PatientDTO updateByCustomer(PatientDTO patientDTO, Long id)
+    public PatientDTO updateByCustomer(PatientDTO patientDTO, String id)
     {
-        try
-        {   PatientProfile profile=patientRepository.getReferenceById(id);
-            if(profile.getPatientUUID()==null)
+            PatientProfile profile=patientRepository.getReferenceById(id);
+            if(!profile.getExaminations().isEmpty())
             {
                 throw new IllegalStateException("Cannot edit");
             }
             profile.setFullName(patientDTO.getFullName());
-            profile.setGender(patientDTO.isGender());
+            profile.setGender(patientDTO.getGender());
             profile.setEmail(patientDTO.getEmail());
             profile.setPhone(patientDTO.getPhone());
             profile.setAddress(profile.getAddress());
             profile.setIdentityCard(profile.getIdentityCard());
             return new PatientDTO(patientRepository.save(profile));
-        }catch (FeignException e)
-        {
-            throw new IllegalStateException("User cannot found");
-        }
     };
-    public PatientDTO update(PatientDTO patientDTO, Long id)
+    public PatientDTO update(PatientDTO patientDTO, String id)
     {
-        try
-        {   PatientProfile profile=patientRepository.getReferenceById(id);
+        PatientProfile profile=patientRepository.getReferenceById(id);
             profile.setFullName(patientDTO.getFullName());
-            profile.setGender(patientDTO.isGender());
+            profile.setGender(patientDTO.getGender());
             profile.setEmail(patientDTO.getEmail());
             profile.setPhone(patientDTO.getPhone());
             profile.setAddress(profile.getAddress());
             profile.setIdentityCard(profile.getIdentityCard());
-            profile.setPatientUUID(patientDTO.getPatient_id());
             return new PatientDTO(patientRepository.save(profile));
-        }catch (FeignException e)
-        {
-            throw new IllegalStateException("User cannot found");
-        }
     }
-    public PatientDTO updateUUID(String UUID, Long id)
+    // Hàm này để cập nhật uuid đã khám trước đó , thay thế vào cái mới
+    public PatientProfile updateUUID(String id_old, String id_new)
     {
-        try
-        {   PatientProfile profile=patientRepository.getReferenceById(id);
-            PatientProfile patientDTO= patientRepository.getFirstByPatientUUID(UUID);
-            profile.setFullName(patientDTO.getFullName());
-            profile.setGender(patientDTO.isGender());
-            profile.setEmail(patientDTO.getEmail());
-            profile.setPhone(patientDTO.getPhone());
-            profile.setAddress(profile.getAddress());
-            profile.setIdentityCard(profile.getIdentityCard());
-            profile.setPatientUUID(patientDTO.getPatientUUID());
-            return new PatientDTO(patientRepository.save(profile));
-        }catch (FeignException e)
-        {
-            throw new IllegalStateException("User cannot found");
-        }
+            PatientProfile profileNoUUID=patientRepository.getReferenceById(id_old);
+            PatientProfile profileUUID= patientRepository.getReferenceById(id_new);
+            if(!profileNoUUID.getExaminations().isEmpty())
+            {
+                throw new IllegalStateException("Profile cannot update uuid");
+            }
+            PatientProfile_Account patientProfileAccount=patientAccountRepository.findFirstByPatientId(profileNoUUID.getId());
+            try {
+                //Lưu uuid cũ
+                patientProfileAccount.setPatient(profileUUID);
+                patientAccountRepository.save(patientProfileAccount);
+            }catch (DataIntegrityViolationException e)// Đề phòng lỗi đã tồn tại
+            {
+                // Vẫn xoá như bt
+                patientAccountRepository.deleteById(patientProfileAccount.getId());
+                return profileUUID;
+            }
+            // Xoá luôn cái mới
+            patientAccountRepository.deleteById(patientProfileAccount.getId());
+            return profileUUID;
     }
     public List<PatientDTO> getAllByAccountID(Long id)
     {
@@ -146,7 +143,7 @@ public class PatientService {
         BooleanExpression byName=patientProfile.fullName.contains(keyword);
         return patientRepository.findAll(byName,pageable).map(PatientDTO::new);
     }
-    public PatientDTO get(Long id)
+    public PatientDTO get(String id)
     {
         return new PatientDTO(patientRepository.getReferenceById(id));
     }

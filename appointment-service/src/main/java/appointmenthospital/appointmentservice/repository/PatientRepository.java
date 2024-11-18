@@ -6,6 +6,5 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PatientRepository extends JpaRepository<PatientProfile,Long>, QuerydslPredicateExecutor<PatientProfile> {
-    PatientProfile getFirstByPatientUUID(String uuid);
+public interface PatientRepository extends JpaRepository<PatientProfile,String>, QuerydslPredicateExecutor<PatientProfile> {
 }

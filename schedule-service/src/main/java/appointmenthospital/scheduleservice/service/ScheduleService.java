@@ -3,21 +3,20 @@ package appointmenthospital.scheduleservice.service;
 import appointmenthospital.scheduleservice.client.DoctorInfoClient;
 import appointmenthospital.scheduleservice.client.RoomInfoClient;
 import appointmenthospital.scheduleservice.log.CustomLogger;
-import appointmenthospital.scheduleservice.log.LogDTO;
-import appointmenthospital.scheduleservice.model.dto.DoctorDomain;
-import appointmenthospital.scheduleservice.model.dto.RoomDTO;
-import appointmenthospital.scheduleservice.model.dto.ScheduleDTO;
-import appointmenthospital.scheduleservice.model.dto.ScheduleRequest;
+import appointmenthospital.scheduleservice.model.domain.DoctorDomain;
+import appointmenthospital.scheduleservice.model.domain.RoomDomain;
+import appointmenthospital.scheduleservice.model.dto.*;
 import appointmenthospital.scheduleservice.model.entity.DayOfWeek;
+import appointmenthospital.scheduleservice.model.entity.QSchedule;
 import appointmenthospital.scheduleservice.model.entity.Schedule;
 import appointmenthospital.scheduleservice.repository.ScheduleRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -29,12 +28,13 @@ public class ScheduleService {
         @Autowired
         private RoomInfoClient roomInfoClient;
         private final CustomLogger customLogger;
+        private final QSchedule schedule=QSchedule.schedule;
         public ScheduleDTO create(ScheduleRequest request)
         {
             try
             {
                 DoctorDomain doctor= doctorInfoClient.getDomain(request.getDoctorID());
-                RoomDTO roomDTO=roomInfoClient.getDomain(request.getRoomID());
+                RoomDomain roomDTO=roomInfoClient.getDomain(request.getRoomID());
             if(!doctor.getMedicalSpecialtyIDs().contains(roomDTO.getMedicalSpecialtyId()))
             {
                 customLogger.log(doctor.toString(),roomDTO.toString());
@@ -67,7 +67,7 @@ public class ScheduleService {
         try
         {
             DoctorDomain doctor= doctorInfoClient.getDomain(request.getDoctorID());
-            RoomDTO roomDTO=roomInfoClient.getDomain(request.getRoomID());
+            RoomDomain roomDTO=roomInfoClient.getDomain(request.getRoomID());
             if(!doctor.getMedicalSpecialtyIDs().contains(roomDTO.getMedicalSpecialtyId()))
             {
                 customLogger.log(doctor.toString(),roomDTO.toString());
@@ -118,5 +118,30 @@ public class ScheduleService {
                 }
             }
             return scheduleDTOS;
+    }
+    public List<AvailableDateDTO> getAvailableDateBySpecialty(Long id)
+    {
+        List<RoomDomain> roomDTOs=roomInfoClient.getRooms(id);
+        List<Long> roomIDs=roomDTOs.stream().map(RoomDomain::getId).toList();
+        List<AvailableDateDTO> availableDateDTOS= new ArrayList<>();
+        for(DayOfWeek d:DayOfWeek.values())
+        {
+                availableDateDTOS.add(new AvailableDateDTO(d.getValue(),scheduleRepository.existsByRoomIDInAndDayOfWeek(roomIDs,d)));
+        }
+        return availableDateDTOS;
+    }
+    public List<ScheduleDTO> getBySpecialtyAndDayOfWeek(Long specialty_id,DayOfWeek dayOfWeek)
+    {
+        List<RoomDomain> roomDTOs=roomInfoClient.getRooms(specialty_id);
+        List<Long> roomIDs=roomDTOs.stream().map(RoomDomain::getId).toList();
+        BooleanExpression bySpecialty=schedule.roomID.in(roomIDs);
+        BooleanExpression byDayOfWeek=schedule.dayOfWeek.eq(dayOfWeek);
+        List<ScheduleDTO> scheduleDTOS=new ArrayList<>();
+        scheduleRepository.findAll(byDayOfWeek.and(bySpecialty)).forEach(x->scheduleDTOS.add(new ScheduleDTO(x)));
+        return scheduleDTOS;
+    }
+    public ScheduleDTO getDomain(Long id)
+    {
+        return new ScheduleDTO(scheduleRepository.getReferenceById(id));
     }
 }

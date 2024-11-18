@@ -36,7 +36,7 @@ public class DoctorController {
         return doctorService.get(id);
     }
 
-    @GetMapping("domain/{id}")
+    @GetMapping("/domain/{id}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     @Hidden
@@ -75,7 +75,7 @@ public class DoctorController {
         return doctorService.getPage(keyword,pageable,request);
     }
     @Operation(summary = "get Doctors", description = "get DoctorList", tags = { "Public API" })
-    @GetMapping("public/lists")
+    @GetMapping("/public/lists")
     public List<DoctorListDTO> getDoctors(
             @RequestParam(defaultValue = "",value = "search",required =false) String keyword,
             DoctorFilterRequest request

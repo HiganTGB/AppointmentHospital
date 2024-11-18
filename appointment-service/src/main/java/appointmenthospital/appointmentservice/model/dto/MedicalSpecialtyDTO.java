@@ -1,26 +1,22 @@
-package appointmenthospital.scheduleservice.model.dto;
-
+package appointmenthospital.appointmentservice.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
-public class RoomDTO {
+@AllArgsConstructor
+public class MedicalSpecialtyDTO {
     protected Long id;
     @NotBlank(message = "Name is required")
-
     private String name;
-
     private String description;
-    @NotNull(message = "Medical Specialty is required")
-    private Long medicalSpecialtyId;
-    @Null
-    private MedicalSpecialtyDTO medicalSpecialty;
-
-
+    @NotNull
+    private BigDecimal price;
 
 }

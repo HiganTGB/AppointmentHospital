@@ -1,9 +1,8 @@
-package appointmenthospital.scheduleservice.model.dto;
+package appointmenthospital.appointmentservice.model.dto;
 
 
 import lombok.Data;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Data

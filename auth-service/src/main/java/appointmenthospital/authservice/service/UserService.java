@@ -162,6 +162,7 @@ public class UserService {
         // save the new password
         userRepository.save(user);
     }
+
     public UserDTO update(UserRequest userDto,Principal connectedUser) {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         User old=get(user.getId());

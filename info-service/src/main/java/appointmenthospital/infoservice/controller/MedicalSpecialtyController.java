@@ -29,16 +29,16 @@ public class MedicalSpecialtyController {
     @GetMapping("/{id}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public MedicalSpecialtyDTO get(@PathVariable(name = "id") String id)
+    public MedicalSpecialtyDTO get(@PathVariable(name = "id") Long id)
     {
-        return medicalSpecialtyService.get(Long.parseLong(id));
+        return medicalSpecialtyService.get(id);
     }
     @PutMapping("/{id}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public MedicalSpecialtyDTO update(@PathVariable String id, @Valid @RequestBody MedicalSpecialtyDTO roomDTO)
+    public MedicalSpecialtyDTO update(@PathVariable Long id, @Valid @RequestBody MedicalSpecialtyDTO roomDTO)
     {
-        return medicalSpecialtyService.update(roomDTO,Long.parseLong(id));
+        return medicalSpecialtyService.update(roomDTO,id);
     }
     @PostMapping
     @ResponseBody
@@ -76,17 +76,23 @@ public class MedicalSpecialtyController {
     {
         return medicalSpecialtyService.removeDoctor(id);
     }
-
-
-    @GetMapping("public/{id}/rooms")
-    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/domain/{id}")
     @ResponseBody
-    @Operation(summary = "Get Rooms", description = "Get all room by specialties",tags = {"Public API"})
-    public List<RoomDTO> getRooms(@PathVariable Long id)
+    @ResponseStatus(HttpStatus.OK)
+    public MedicalSpecialtyDTO getDomain(@PathVariable(name = "id") String id)
     {
-        return roomService.getAllByMedicalSpecialty(id);
+        return medicalSpecialtyService.get(Long.parseLong(id));
     }
-    @GetMapping("public/lists")
+
+//    @GetMapping("/public/{id}/rooms")
+//    @ResponseStatus(HttpStatus.OK)
+//    @ResponseBody
+//    @Operation(summary = "Get Rooms", description = "Get all room by specialties",tags = {"Public API"})
+//    public List<RoomDTO> getRooms(@PathVariable Long id)
+//    {
+//        return roomService.getAllByMedicalSpecialty(id);
+//    }
+    @GetMapping("/public/lists")
     @Operation(summary = "Specialties list", description = "Get specialties list",tags = {"Public API"})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -94,7 +100,7 @@ public class MedicalSpecialtyController {
     {
         return medicalSpecialtyService.getAll();
     }
-    @GetMapping("public/doctor/{id}")
+    @GetMapping("/public/doctor/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Operation(summary = "Specialties Doctor", description = "Get specialties by doctor ID",tags = {"Public API"})

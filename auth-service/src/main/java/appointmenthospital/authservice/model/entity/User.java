@@ -53,7 +53,8 @@ public class User extends BaseEntity implements UserDetails {
     private List<Token> tokens;
     @OneToOne(mappedBy = "user",targetEntity = Doctor.class,fetch = FetchType.LAZY)
     private Doctor doctor;
-
+    @OneToOne(mappedBy = "user_id",targetEntity = PasswordResetToken.class)
+    private PasswordResetToken passwordResetToken;
 
     @JsonProperty("username")
     @Override

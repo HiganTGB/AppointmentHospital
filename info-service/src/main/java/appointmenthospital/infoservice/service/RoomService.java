@@ -1,6 +1,7 @@
 package appointmenthospital.infoservice.service;
 
 import appointmenthospital.infoservice.model.dto.RoomDTO;
+import appointmenthospital.infoservice.model.dto.RoomDomain;
 import appointmenthospital.infoservice.model.entity.MedicalSpecialty;
 import appointmenthospital.infoservice.model.entity.QRoom;
 import appointmenthospital.infoservice.model.entity.Room;
@@ -51,12 +52,16 @@ public class RoomService {
         return roomRepository.findAll().stream().map(RoomDTO::new).toList();
     }
 
-    public List<RoomDTO> getAllByMedicalSpecialty(Long id)
+    public List<RoomDomain> getAllByMedicalSpecialty(Long id)
     {
 
-        return roomRepository.findAllByMedicalSpecialtyId(id).stream().map(RoomDTO::new).toList();
+        return roomRepository.findAllByMedicalSpecialtyId(id).stream().map(RoomDomain::new).toList();
     }
+    public RoomDomain getDomain(Long id)
+    {
 
+        return new RoomDomain(roomRepository.getReferenceById(id));
+    }
 
     public Page<RoomDTO> getPage(String keyword,Pageable pageable)
     {

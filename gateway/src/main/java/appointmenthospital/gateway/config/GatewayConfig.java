@@ -38,10 +38,10 @@ public class GatewayConfig {
                 // Info Service
 
                 .route("info-service", r -> r.path("/api/v1/specialties/**")
-                        .filters(f -> f.filter(filter))
+                        //.filters(f -> f.filter(filter))
                         .uri("lb://info-service"))
                 .route("info-service", r -> r.path("/api/v1/rooms/**")
-                        .filters(f -> f.filter(filter))
+                        //.filters(f -> f.filter(filter))
                         .uri("lb://info-service"))
                 //
 
@@ -52,8 +52,16 @@ public class GatewayConfig {
 
                 // Schedule Service
                 .route("schedule-service", r -> r.path("/api/v1/schedule/**")
-                        .filters(f->f.filter(filter))
+                       // .filters(f->f.filter(filter))
                         .uri("lb://schedule-service"))
+
+
+                // Appointment Service
+
+                .route("appointment-service", r -> r.path("/api/v1/patients/**")
+                      //  .filters(f->f.filter(filter))
+                        .uri("lb://appointment-service"))
+
 
                 .build();
     }

@@ -1,14 +1,20 @@
 package appointmenthospital.authservice.auth;
 
 import appointmenthospital.authservice.config.JwtService;
+import appointmenthospital.authservice.exc.AppException;
 import appointmenthospital.authservice.log.CustomLogger;
 import appointmenthospital.authservice.log.LogDTO;
+import appointmenthospital.authservice.model.dto.ChangePasswordRequest;
+import appointmenthospital.authservice.model.dto.PasswordResetDTO;
+import appointmenthospital.authservice.model.entity.PasswordResetToken;
 import appointmenthospital.authservice.model.entity.User;
+import appointmenthospital.authservice.repository.PasswordResetTokenRepository;
 import appointmenthospital.authservice.repository.UserRepository;
 import appointmenthospital.authservice.service.UserService;
 import appointmenthospital.authservice.token.Token;
 import appointmenthospital.authservice.token.TokenRepository;
 import appointmenthospital.authservice.token.TokenType;
+import appointmenthospital.authservice.twilio.TwilioSmsSender;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,23 +27,40 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.security.Principal;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository repository;
     private final TokenRepository tokenRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final CustomLogger logger;
     private final UserService userService;
-
+    private final TwilioSmsSender smsSender;
+    public boolean sentOTP(String phone)
+    {
+        try {
+            String otp= smsSender.sendOTP(phone);
+            return true;
+        }catch (AppException e)
+        {
+            return false;
+        }
+    }
     public AuthenticationResponse register(RegisterRequest request) {
         if(phoneExist(request.getPhone()))
         {
             throw new IllegalStateException("Phone already exists");
         }
+//        if(smsSender.validateOTP(request.getOtp(),request.getPhone()))
+//        {
+//            throw new IllegalStateException("Invalid OTP");
+//        }
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
@@ -127,6 +150,47 @@ public class AuthenticationService {
             }
         }
     }
+
+
+    public boolean createResetPassword(String phone) {
+
+        var user = repository.findByPhone(phone)
+                .orElseThrow();
+
+        try {
+            String otp= smsSender.sendOTP(phone);
+            return true;
+        }catch (AppException e)
+        {
+            return false;
+        }
+    }
+    public String authResetOTPPassword(String otp,String phone)
+    {
+        smsSender.validateOTP(otp,phone);
+        String token= UUID.randomUUID().toString();
+        var user = repository.findByPhone(phone)
+                .orElseThrow();
+        PasswordResetToken resetToken=new PasswordResetToken(token,user);
+        passwordResetTokenRepository.save(resetToken);
+        return token;
+    }
+    public AuthenticationResponse resetPassword(PasswordResetDTO dto)
+    {
+        PasswordResetToken token=passwordResetTokenRepository.getByToken(dto.getToken());
+        var user = repository.findByPasswordResetToken(token)
+                .orElseThrow();
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        var savedUser = repository.save(user);
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        saveUserToken(savedUser, jwtToken);
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
     private boolean emailExist(String email) {
         return repository.existsByEmail(email);
     }

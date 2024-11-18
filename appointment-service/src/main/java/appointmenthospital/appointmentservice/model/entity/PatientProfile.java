@@ -1,9 +1,6 @@
 package appointmenthospital.appointmentservice.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.ws.rs.core.Link;
 import lombok.*;
 
@@ -16,11 +13,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PatientProfile extends BaseEntity {
+public class PatientProfile extends DataInfoTime {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
     @Column(nullable = false,name = "fullName")
     private String fullName;
     @Column(name = "gender",nullable = false)
-    private boolean gender;
+    private Gender gender;
     @Column(nullable = false,name = "identityCard")
     private String identityCard;
     @Column(nullable = false,name = "phone")
@@ -29,10 +29,8 @@ public class PatientProfile extends BaseEntity {
     private String email;
     @Column(nullable = false,name = "address")
     private String address;
-    @OneToMany(mappedBy = "patientProfile",targetEntity = Examination.class)
+    @OneToMany(mappedBy = "patientProfile",targetEntity = Examination.class,fetch = FetchType.LAZY)
     private List<Examination> examinations;
-    @Column(nullable = true)
-    private String patientUUID;
     @OneToMany(mappedBy = "patient",targetEntity = PatientProfile_Account.class,fetch = FetchType.LAZY)
     private List<PatientProfile_Account> patientProfile_accounts;
 }

@@ -1,20 +1,46 @@
 package appointmenthospital.appointmentservice.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Examination extends BaseEntity {
-    private long roomId;
-    private String medicalSpecialty;
-    @ManyToOne(targetEntity = PatientProfile.class)
-    private PatientProfile patientProfile;
+    @Column(nullable = false)
+    private long roomID;
+    @Column(nullable = false)
+    private long specialtyID;
+    @Column(nullable = false)
     private long doctorId;
-    private long account_id;
-    private Long number;
-    private Timestamp time;
-    private int status;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private PatientProfile patientProfile;
+    @Column(nullable = false)
+    private long accountID;
+    @Column(nullable = false)
+    private String roomName;
+    @Column(nullable = false)
+    private String specialtyName;
+    @Column(nullable = false)
+    private LocalDate date;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TimeSlot timeSlot;
+
+    @Column(nullable = false)
+    private int number;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AppointmentStatus status;
+    @Column(nullable = false)
     private BigDecimal price;
 }

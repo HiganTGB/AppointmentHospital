@@ -36,7 +36,7 @@ public class PatientProfileController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public PatientDTO get(@PathVariable Long id)
+    public PatientDTO get(@PathVariable String id)
     {
         return patientService.get(id);
     }
@@ -47,12 +47,26 @@ public class PatientProfileController {
     {
         return patientService.create(patientDTO,principal);
     }
+    @PostMapping("/add")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public PatientDTO createByUUID(String UUID, Principal principal)
+    {
+        return patientService.create(UUID,principal);
+    }
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public PatientDTO update(@PathVariable Long id,@RequestBody @Valid PatientDTO roleDTO)
+    public PatientDTO update(@PathVariable String id,@RequestBody @Valid PatientDTO roleDTO)
     {
         return patientService.update(roleDTO,id);
+    }
+    @PutMapping("/customer/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public PatientDTO updatebyCustomer(@PathVariable String id,@RequestBody @Valid PatientDTO roleDTO)
+    {
+        return patientService.updateByCustomer(roleDTO,id);
     }
     @GetMapping("/{id}/patients")
     @ResponseStatus(HttpStatus.OK)
