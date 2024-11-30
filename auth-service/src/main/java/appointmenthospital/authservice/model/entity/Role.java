@@ -28,7 +28,7 @@ public class Role extends BaseEntity {
     @Column(name = "description",nullable = true)
     private String description;
     @Column(columnDefinition = "binary(60)")
-    private byte[] permissionsString=new byte[PERMISSIONS_STRING_LIMIT];
+    private byte[] permissions=new byte[PERMISSIONS_STRING_LIMIT];
 
     @OneToMany(mappedBy = "role",fetch = FetchType.LAZY)
     @JsonIgnore
@@ -40,12 +40,12 @@ public class Role extends BaseEntity {
 
     public boolean isPermissionGranted(int permissionCode) {
         int x = permissionCode >>> 3, y = (~permissionCode) & 7;
-        return ((permissionsString[x] >>> y) & 1) != 0;
+        return ((permissions[x] >>> y) & 1) != 0;
     }
     public void setPermissionGranted(int permissionCode, boolean value) {
         int x = permissionCode >>> 3, y = (~permissionCode) & 7, z = 1 << y;
-        if (value) permissionsString[x] |= (byte) z;
-        else permissionsString[x] &= (byte) ~z;
+        if (value) permissions[x] |= (byte) z;
+        else permissions[x] &= (byte) ~z;
     }
     @Override
     public String toString() {

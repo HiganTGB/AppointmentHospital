@@ -1,7 +1,6 @@
 package appointmenthospital.authservice.controller;
 
 import appointmenthospital.authservice.model.dto.RoleDTO;
-import appointmenthospital.authservice.model.dto.UserDTO;
 import appointmenthospital.authservice.model.entity.Permission;
 import appointmenthospital.authservice.model.entity.Role;
 import appointmenthospital.authservice.service.RoleService;
@@ -30,7 +29,7 @@ public class RoleController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Operation(summary = "Page", description = "Get page + search by keyword")
-    public Page<Role> getAll(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
+    public Page<RoleDTO> getAll(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
             @RequestParam(defaultValue = "0",value = "page",required =false)int page,
                                 @RequestParam(value="sortBy" ,required = false,defaultValue = "id") String sortBy,
                                 @RequestParam(value="orderBy" ,required = false,defaultValue = "ASC") String orderBy) {
@@ -61,6 +60,31 @@ public class RoleController {
     {
         return roleService.update(roleDTO,id);
     }
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public boolean delete(@PathVariable Long id)
+    {
+        return roleService.delete(id);
+    }
+
+    @GetMapping("/{id}/permissions")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<Permission> getPermission(@PathVariable Long id)
+    {
+        return roleService.get(id).getPermissions();
+    }
+    @PostMapping("/{id}/permissions/{permit}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public RoleDTO changePermission(@PathVariable Long id,@PathVariable int permit,
+                                    @RequestParam(value="granted" ,required = true) Boolean granted)
+    {
+        return roleService.changePermission(id,permit,granted);
+    }
+
+
     @GetMapping("/permissions")
     @Operation(summary = "Permission", description = "Get all permission list")
     @ResponseStatus(HttpStatus.OK)
@@ -69,5 +93,4 @@ public class RoleController {
     {
         return List.of(Permission.values());
     }
-
 }

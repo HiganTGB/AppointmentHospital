@@ -1,12 +1,10 @@
 package appointmenthospital.authservice.model.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
-
+import java.time.LocalTime;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
@@ -14,10 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table
-public class Doctor_Specialty extends DataInfoTime {
-    @ManyToOne
-    private Doctor doctor;
-    private Long SpecialtyId;
-    @Id
-    private Long id;
+public class SchedulerPart extends BaseEntity {
+    public LocalTime start;
+    public LocalTime end;
 }

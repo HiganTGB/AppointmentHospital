@@ -1,67 +1,36 @@
 package appointmenthospital.authservice.service;
 
-import appointmenthospital.authservice.exc.AppException;
-import appointmenthospital.authservice.model.dto.ChangePasswordRequest;
+import appointmenthospital.authservice.client.FileStorageClient;
+import appointmenthospital.authservice.model.dto.PatientDTO;
+import appointmenthospital.authservice.model.dtoOld.ChangePasswordRequest;
 import appointmenthospital.authservice.model.dto.UserDTO;
-import appointmenthospital.authservice.model.dto.UserRequest;
-import appointmenthospital.authservice.model.entity.QUser;
-import appointmenthospital.authservice.model.entity.Role;
+import appointmenthospital.authservice.model.entity.Patient;
 import appointmenthospital.authservice.model.entity.User;
-import appointmenthospital.authservice.repository.RoleRepository;
 import appointmenthospital.authservice.repository.UserRepository;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.MappingException;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.lang.reflect.Type;
 import java.security.Principal;
-
 @Service
-@RequiredArgsConstructor
 public class UserService {
-    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final ModelMapper modelMapper;
-    private final QUser user=QUser.user;
-    private final Type pageType = new TypeToken<Page<UserDTO>>(){}.getType();
-    @Value("${application.security.password.default-prefix}")
-    private long passwordPrefix;
-   // @PostConstruct
-    public void initUser()
-    {
-        Role role=new Role();
-        role.setName("ADMIN");
-        role.setPermissionGranted(1,true);
-        role.setPermissionGranted(2,false);
-        role.setPermissionGranted(3,true);
-        roleRepository.save(role);
-
-        var user = User.builder()
-                .firstName("admin")
-                .lastName("admin")
-                .phone("0123456789")
-                .email("admin@gmail.com")
-                .role(roleRepository.getReferenceById(1L))
-                .isEnabled(true)
-                .isStaff(true)
-                .emailVerified(false)
-                .phoneVerified(false)
-                .password(passwordEncoder.encode("admin"))
-                .build();
-        userRepository.save(user);
+    private final PasswordEncoder passwordEncoder;
+    private final FileStorageClient fileStorageClient;
+    private ModelMapper modelMapper;
+    @Autowired
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,FileStorageClient fileStorageClient) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.fileStorageClient=fileStorageClient;
     }
-    public UserDTO create(UserRequest userDto) // create staff only
+    public UserDTO create(UserDTO userDto,boolean isStaff)
     {
         if(emailExist(userDto.getEmail()))
         {
@@ -72,77 +41,39 @@ public class UserService {
             throw new IllegalStateException("Phone already exists");
         }
         var user = User.builder()
-                .firstName(userDto.getFirstName())
-                .lastName(userDto.getLastName())
+                .fullName(userDto.getFullName())
                 .phone(userDto.getPhone())
                 .email(userDto.getEmail())
                 .role(null)
                 .isEnabled(true)
-                .isStaff(true)
+                .isStaff(isStaff)
                 .emailVerified(true)
                 .phoneVerified(true)
-                .password(passwordEncoder.encode(passwordPrefix+userDto.getPhone()))
+                .password(passwordEncoder.encode(userDto.getPhone()))
                 .build();
-        return modelMapper.map(userRepository.save(user),UserDTO.class) ;
+        return new UserDTO(userRepository.save(user)) ;
     }
-    public UserDTO update(UserRequest userDto, Long id) {
-        User old=get(id);
-        old.setFirstName(userDto.getFirstName());
-        old.setLastName(userDto.getLastName());
-        if(phoneExist(userDto.getPhone(),old.getPhone()))
-        {
-            throw new IllegalStateException("Phone already exists");
-        }
-        if(emailExist(userDto.getEmail(),old.getEmail()))
+    public UserDTO update(UserDTO userDto,boolean isStaff,long id)
+    {
+        User user=getEntity(id);
+        if(emailExist(userDto.getEmail(),user.getEmail()))
         {
             throw new IllegalStateException("Email already exists");
         }
-        old.setPhone(userDto.getPhone());
-        old.setEmail(userDto.getEmail());
-        return modelMapper.map(userRepository.save(old),UserDTO.class) ;
-    }
-    public boolean lock(Long id)
-    {
-        User old=get(id);
-        old.setEnabled(false);
-        userRepository.save(old);
-        return true;
-    }
-    public boolean unlock(Long id)
-    {
-        User old=get(id);
-        old.setEnabled(true);
-        userRepository.save(old);
-        return true;
-    }
-    private User get(Long id){
-        try {
-            return userRepository.getReferenceById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new AppException("User with " + id +" not found");
-        }
-    }
-    public UserDTO getDto(Long id)
-    {
-        try {
-            User user=get(id);
-            return modelMapper.map(user,UserDTO.class);
-        }catch (MappingException e)
+        if(phoneExist(userDto.getPhone(),user.getPhone()))
         {
-            throw new AppException("User with " + id +" not found");
+            throw new IllegalStateException("Phone already exists");
         }
+        user.setFullName(userDto.getFullName());
+        user.setEmail(userDto.getEmail());
+        user.setPhone(userDto.getPhone());
+        user.setIsStaff(isStaff);
+        return new UserDTO(userRepository.save(user)) ;
     }
-    public Page<UserDTO> getPage(Pageable pageable)
+    public User getEntity(long id)
     {
-      return   modelMapper.map(userRepository.findAll(pageable),pageType);
+        return userRepository.findById(id).orElseThrow(()->new EntityNotFoundException("User not found"));
     }
-    public Page<UserDTO> getPage(Pageable pageable, boolean isStaff,String keyword)
-    {
-        BooleanExpression byName=user.firstName.contains(keyword).or(user.lastName.contains(keyword));
-        BooleanExpression byStaff=(isStaff)? user.isStaff.isTrue():user.isStaff.isFalse();
-        return modelMapper.map(userRepository.findAll(byName.and(byStaff),pageable),pageType);
-    }
-
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -162,23 +93,22 @@ public class UserService {
         // save the new password
         userRepository.save(user);
     }
-
-    public UserDTO update(UserRequest userDto,Principal connectedUser) {
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-        User old=get(user.getId());
-        old.setFirstName(userDto.getFirstName());
-        old.setLastName(userDto.getLastName());
-        if(phoneExist(userDto.getPhone(),old.getPhone()))
-        {
-            throw new IllegalStateException("Phone already exists");
-        }
-        if(emailExist(userDto.getEmail(),old.getEmail()))
-        {
-            throw new IllegalStateException("Email already exists");
-        }
-        old.setPhone(userDto.getPhone());
-        old.setEmail(userDto.getEmail());
-        return modelMapper.map(userRepository.save(old),UserDTO.class) ;
+    private User getEntity(Long id){
+        return userRepository.findById(id).orElseThrow(()->new EntityNotFoundException("User with " + id +" not found"));
+    }
+    public boolean lock(Long id)
+    {
+        User old= getEntity(id);
+        old.setEnabled(false);
+        userRepository.save(old);
+        return true;
+    }
+    public boolean unlock(Long id)
+    {
+        User old= getEntity(id);
+        old.setEnabled(true);
+        userRepository.save(old);
+        return true;
     }
     private boolean emailExist(String email) {
         return userRepository.existsByEmail(email);
@@ -192,5 +122,48 @@ public class UserService {
     private boolean phoneExist(String phone,String oldPhone) {
         return userRepository.existsByPhoneAndPhoneNotLike(phone,oldPhone);
     }
+    public UserDTO update(UserDTO dto,Principal connectedUser)
+    {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        user.setPhone(dto.getPhone());
+        user.setEmail(dto.getEmail());
+        user.setFullName(dto.getFullName());
+        return new UserDTO(userRepository.save(user));
+    }
+    @Transactional
+    public String setImage(MultipartFile file,Principal connectedUser)
+    {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
+        return setImage(file,user.getId());
+    }
+    public String getImage(Principal connectedUser)
+    {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        return getImage(user.getId());
+    }
+    @Transactional
+    public String setImage(MultipartFile file,long user_id)
+    {
+        User user=getEntity(user_id);
+        var response = fileStorageClient.uploadImageToFileSystem(file);
+        if(user.getImage()!=null)
+        {
+            fileStorageClient.deleteImageFromFileSystem(user.getImage());
+        }
+        user.setImage(response.getBody());
+        userRepository.save(user);
+        return user.getImage();
+    }
+    public String getImage(long user_id)
+    {
+        User user=getEntity(user_id);
+        return user.getImage();
+    }
+
+    public UserDTO get(Principal connectedUser)
+    {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        return new UserDTO(getEntity(user.getId()));
+    }
 }

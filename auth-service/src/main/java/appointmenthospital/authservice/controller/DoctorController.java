@@ -1,86 +1,108 @@
 package appointmenthospital.authservice.controller;
 
-import appointmenthospital.authservice.model.dto.*;
-import appointmenthospital.authservice.model.entity.Degree;
-import appointmenthospital.authservice.model.entity.Gender;
+import appointmenthospital.authservice.client.FileStorageClient;
+import appointmenthospital.authservice.model.dto.DoctorDTO;
+import appointmenthospital.authservice.model.dto.PatientDTO;
+import appointmenthospital.authservice.model.dto.UserDTO;
 import appointmenthospital.authservice.service.DoctorService;
-import io.swagger.v3.oas.annotations.Hidden;
+import appointmenthospital.authservice.service.UserService;
+import feign.FeignException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.core.annotation.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1/doctors")
-@Tag(name = "Doctor API", description = "All about doctor")
-@Order(3)
-@RequiredArgsConstructor
 public class DoctorController {
+    private final UserService userService;
+
+
     private final DoctorService doctorService;
-    @GetMapping("/{id}")
-    @ResponseBody
+    private final FileStorageClient storageClient;
+    @Autowired
+    public DoctorController(UserService userService, DoctorService doctorService, FileStorageClient storageClient) {
+        this.userService = userService;
+        this.doctorService = doctorService;
+        this.storageClient = storageClient;
+    }
+
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @Operation(summary = "Page", description = "Get page + search by keyword")
+    public Page<DoctorDTO> getAll(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
+                                  @RequestParam(defaultValue = "0",value = "page",required =false)int page,
+                                  @RequestParam(value="sortBy" ,required = false,defaultValue = "id") String sortBy,
+                                  @RequestParam(value="orderBy" ,required = false,defaultValue = "ASC") String orderBy) {
+        Sort sort = Sort.by(orderBy.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
+
+        Pageable pageable = PageRequest.of(page, 10, sort); // Assuming a page size of 10
+
+        return doctorService.getPaged(keyword,pageable);
+    }
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
     public DoctorDTO get(@PathVariable Long id)
     {
         return doctorService.get(id);
     }
-
-    @GetMapping("/domain/{id}")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    @Hidden
-    public DoctorDomain getDomain(@PathVariable Long id)
-    {
-        return new DoctorDomain(doctorService.getEntity(id)) ;
-    }
     @PostMapping
-    @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "create Doctor", description = "create Doctor with image, set multipart/form-data")
-    public DoctorDTO create(@Valid @RequestPart(name = "doctor") DoctorRequest doctorRequest,@RequestPart("image") MultipartFile file)
+    @ResponseBody
+    public DoctorDTO create(@RequestBody @Valid DoctorDTO dto)
     {
-        return doctorService.create(doctorRequest,file);
+        return doctorService.create(dto);
     }
-    @PutMapping(value = "/{id}")
-    @ResponseBody
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "update Doctor", description = "update Doctor with image,set multipart/form-data")
-    public DoctorDTO update(@Valid @RequestPart(name = "doctor") DoctorRequest doctorRequest,@RequestPart("image") MultipartFile file,@PathVariable Long id)
+    @ResponseBody
+    public DoctorDTO update(@PathVariable Long id,@RequestBody @Valid DoctorDTO dto)
     {
-        return doctorService.update(doctorRequest,file,id);
+        return doctorService.update(dto,id);
     }
-    @GetMapping
-    @ResponseBody
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Page<DoctorDTO> getPage(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
-                                   @RequestParam(defaultValue = "0",value = "page",required =false)int page,
-                                   @RequestParam(value="sortBy" ,required = false,defaultValue = "id") String sortBy,
-                                   @RequestParam(value="orderBy" ,required = false,defaultValue = "ASC") String orderBy,
-                                   DoctorFilterRequest request)
+    @ResponseBody
+    public Boolean delete(@PathVariable Long id)
     {
-        Sort sort = Sort.by(orderBy.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
+        return doctorService.delete(id);
+    }
+    @GetMapping("/{doctor_id}/image")
+    public String setImage(@PathVariable Long doctor_id,@RequestPart("image") MultipartFile file)
+    {
+        DoctorDTO dto=doctorService.get(doctor_id);
+        return userService.setImage(file,dto.getId());
+    }
+    @PostMapping("/{doctor_id}/image")
+    public ResponseEntity<?> getImage(@PathVariable Long doctor_id)
+    {
+        DoctorDTO dto=doctorService.get(doctor_id);
+        String link= userService.getImage( dto.getUserId());
+        try
+        {
+            return storageClient.downloadImageFromFileSystem(link);
+        }catch (FeignException e)
+        {
+            return null;
+        }
+    }
+    @GetMapping("/current")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public DoctorDTO get(Principal connectedUser)
+    {
+        return doctorService.getByUser(connectedUser);
+    }
 
-        Pageable pageable = PageRequest.of(page, 10, sort); // Assuming a page size of 10
-        return doctorService.getPage(keyword,pageable,request);
-    }
-    @Operation(summary = "get Doctors", description = "get DoctorList", tags = { "Public API" })
-    @GetMapping("/public/lists")
-    public List<DoctorListDTO> getDoctors(
-            @RequestParam(defaultValue = "",value = "search",required =false) String keyword,
-            DoctorFilterRequest request
-    )
-    {
-        return doctorService.getList(keyword,request);
-    }
 }

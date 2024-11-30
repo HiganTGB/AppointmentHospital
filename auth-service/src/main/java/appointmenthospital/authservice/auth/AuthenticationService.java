@@ -3,9 +3,7 @@ package appointmenthospital.authservice.auth;
 import appointmenthospital.authservice.config.JwtService;
 import appointmenthospital.authservice.exc.AppException;
 import appointmenthospital.authservice.log.CustomLogger;
-import appointmenthospital.authservice.log.LogDTO;
-import appointmenthospital.authservice.model.dto.ChangePasswordRequest;
-import appointmenthospital.authservice.model.dto.PasswordResetDTO;
+import appointmenthospital.authservice.model.dtoOld.PasswordResetDTO;
 import appointmenthospital.authservice.model.entity.PasswordResetToken;
 import appointmenthospital.authservice.model.entity.User;
 import appointmenthospital.authservice.repository.PasswordResetTokenRepository;
@@ -22,12 +20,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.UUID;
 
 @Service
@@ -62,8 +58,8 @@ public class AuthenticationService {
 //            throw new IllegalStateException("Invalid OTP");
 //        }
         var user = User.builder()
-                .firstName(request.getFirstname())
-                .lastName(request.getLastname())
+                .fullName(request.getFullName())
+                .email(request.getEmail())
                 .phone(request.getPhone())
                 .isEnabled(true)
                 .isStaff(false)

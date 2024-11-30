@@ -1,4 +1,4 @@
-package appointmenthospital.authservice.model.dto;
+package appointmenthospital.authservice.model.dtoOld;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

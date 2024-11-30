@@ -27,10 +27,8 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(nullable = false,name = "password")
     private String password;
-    @Column(nullable = false,name = "firstName")
-    private String firstName;
-    @Column(nullable = false,name = "lastName")
-    private String lastName;
+    @Column(nullable = false,name = "fullName")
+    private String fullName;
     @Column(nullable = true,name = "email",unique = true)
     private String email;
     @Column(nullable = false,name = "email_verified",columnDefinition = "bit(1) default 0")
@@ -43,18 +41,24 @@ public class User extends BaseEntity implements UserDetails {
     private Boolean isStaff;
     @Column(nullable = false)
     private boolean isEnabled;
-    @Column(name = "last_password_reset_date")
-    private Timestamp lastPasswordResetDate;
+    @Column(nullable = true)
+    private String image;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id",nullable = true)
     private Role role;
-    @OneToMany(mappedBy = "user")
-    private List<Token> tokens;
+
     @OneToOne(mappedBy = "user",targetEntity = Doctor.class,fetch = FetchType.LAZY)
     private Doctor doctor;
+    @OneToOne(mappedBy = "user",targetEntity = Patient.class,fetch = FetchType.LAZY)
+    private Patient patient;
+
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
     @OneToOne(mappedBy = "user_id",targetEntity = PasswordResetToken.class)
     private PasswordResetToken passwordResetToken;
+
 
     @JsonProperty("username")
     @Override
@@ -89,7 +93,7 @@ public class User extends BaseEntity implements UserDetails {
     {
         if(this.role==null) return Collections.emptyList();
 
-        return Role.permissionIdentitiesOf(this.role.getPermissionsString());
+        return Role.permissionIdentitiesOf(this.role.getPermissions());
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

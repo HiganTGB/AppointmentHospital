@@ -16,8 +16,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long>, QuerydslPredicateExecutor<User> {
     Optional<User> findByPhone(String phone );
     Optional<User> findByPasswordResetToken(PasswordResetToken token);
-    Page<User> findAllByIsStaffFalse(Pageable pageable);
-    Page<User> findAllByIsStaffTrue(Pageable pageable);
 
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);

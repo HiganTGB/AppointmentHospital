@@ -1,7 +1,7 @@
 package appointmenthospital.authservice.auth;
 
-import appointmenthospital.authservice.model.dto.OtpDTO;
-import appointmenthospital.authservice.model.dto.PasswordResetDTO;
+import appointmenthospital.authservice.model.dtoOld.OtpDTO;
+import appointmenthospital.authservice.model.dtoOld.PasswordResetDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

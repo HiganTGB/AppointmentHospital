@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -16,19 +15,17 @@ import java.util.Set;
 public class Doctor extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Degree degree;
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
     private Gender gender;
+    @Column(nullable = false)
+    private String position;
+    @Column(nullable = false)
+    private String certificate;
+    @Column(nullable = true)
+    private String image;
+    @OneToMany(mappedBy = "doctor")
+    private List<Diagnostic> diagnosticServices;
     @OneToOne(fetch = FetchType.EAGER)
     private User user;
-    @Column(nullable = true)
-    private String urlAvatar;
-    @OneToMany(fetch = FetchType.EAGER,mappedBy = "doctor")
-    @Column
-    private List<Doctor_Specialty> doctorSpecialties;
-    public String getFullName()
-    {
-        return String.format("%s %s",this.user.getFirstName(),this.user.getLastName());
-    }
+    @OneToMany(mappedBy = "doctor",targetEntity = ExaminationDetail.class)
+    private List<ExaminationDetail> examinationDetails;
 }

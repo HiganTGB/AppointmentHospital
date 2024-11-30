@@ -55,3 +55,10 @@ twilio:
   account-sid:
   auth-token:
   trial-number:
+scheduleService:
+  firstStart: 07:30
+  firstEnd : 11:30
+  lastStart : 13:00
+  lastEnd : 17:00
+  bigStepGap : 30
+  stepGap : 7
