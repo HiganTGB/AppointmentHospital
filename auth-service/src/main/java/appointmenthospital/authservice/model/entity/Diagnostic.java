@@ -18,7 +18,7 @@ public class Diagnostic extends BaseEntity {
     private String name;
     @Column(nullable = false)
     private BigDecimal price;
-    @OneToMany(mappedBy = "diagnosticService")
+    @OneToMany(mappedBy = "diagnostic")
     private List<ExaminationDetail> examinationDetails;
     @ManyToOne
     private Doctor doctor;

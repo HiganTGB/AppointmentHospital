@@ -56,7 +56,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
-    @OneToOne(mappedBy = "user_id",targetEntity = PasswordResetToken.class)
+    @OneToOne(mappedBy = "user",targetEntity = PasswordResetToken.class)
     private PasswordResetToken passwordResetToken;
 
 

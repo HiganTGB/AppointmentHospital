@@ -14,10 +14,10 @@ import lombok.*;
 @Table
 public class PrescriptionDetail extends BaseEntity {
     @ManyToOne
-    @Column(name = "prescription_id")
+    @JoinColumn(name = "prescription_id")
     private Prescription prescription;
     @ManyToOne
-    @Column(name = "medicine_id")
+    @JoinColumn(name = "medicine_id")
     private Medicine medicine;
     @Column
     private String description;
