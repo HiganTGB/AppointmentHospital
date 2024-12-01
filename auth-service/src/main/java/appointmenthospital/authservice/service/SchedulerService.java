@@ -1,8 +1,10 @@
 package appointmenthospital.authservice.service;
 
 import appointmenthospital.authservice.model.entity.Doctor;
+import appointmenthospital.authservice.model.entity.QAppointment;
 import appointmenthospital.authservice.model.entity.SchedulerAllocation;
 import appointmenthospital.authservice.model.entity.SchedulerPart;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -34,6 +36,7 @@ public class SchedulerService {
     private Duration _stepGap;
     private List<SchedulerPart> _parts;
     private List<SchedulerAllocation> _allocations;
+    private QAppointment appointment=QAppointment.appointment;
 
     private LocalTime scaledEndOf(LocalTime end, LocalTime start) {
         Duration bigStepGap = _bigStepGap;

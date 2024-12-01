@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/appointments")
+@RequestMapping("/api/v1/appointment")
 @RequiredArgsConstructor
 public class  AppointmentController {
     private AppointmentService appointmentService;

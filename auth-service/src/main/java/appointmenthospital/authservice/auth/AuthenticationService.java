@@ -9,6 +9,7 @@ import appointmenthospital.authservice.model.entity.User;
 import appointmenthospital.authservice.repository.PasswordResetTokenRepository;
 import appointmenthospital.authservice.repository.UserRepository;
 import appointmenthospital.authservice.service.UserService;
+import appointmenthospital.authservice.speedsms.SpeedSMSAPI;
 import appointmenthospital.authservice.token.Token;
 import appointmenthospital.authservice.token.TokenRepository;
 import appointmenthospital.authservice.token.TokenType;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -37,21 +39,27 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final CustomLogger logger;
     private final UserService userService;
-    private final TwilioSmsSender smsSender;
+    private final SpeedSMSAPI smsSender=new SpeedSMSAPI();
     public boolean sentOTP(String phone)
     {
         try {
-            String otp= smsSender.sendOTP(phone);
+            String otp= smsSender.sentOtp(phone);
             return true;
         }catch (AppException e)
         {
             return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
     public AuthenticationResponse register(RegisterRequest request) {
         if(phoneExist(request.getPhone()))
         {
             throw new IllegalStateException("Phone already exists");
+        }
+        if(emailExist(request.getEmail()))
+        {
+            throw new IllegalStateException("Email already exists");
         }
 //        if(smsSender.validateOTP(request.getOtp(),request.getPhone()))
 //        {
@@ -154,10 +162,12 @@ public class AuthenticationService {
                 .orElseThrow();
 
         try {
-            String otp= smsSender.sendOTP(phone);
+            String otp= smsSender.sentOtp(phone);
             return true;
         }catch (AppException e)
         {
+            return false;
+        } catch (IOException e) {
             return false;
         }
     }

@@ -28,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/user")
 @Tag(name = "User API", description = "All about User")
 @Order(2)
 public class UserController {

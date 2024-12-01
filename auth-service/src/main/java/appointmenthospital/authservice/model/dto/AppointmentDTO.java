@@ -13,7 +13,8 @@ public class AppointmentDTO {
     private long number;
     private long state;
     private Long profile;
-    private long doctor;
+    @JsonProperty("doctor")
+    private long doctorId;
     public AppointmentDTO(Appointment appointment)
     {
         this.id=appointment.getId();
@@ -21,7 +22,7 @@ public class AppointmentDTO {
         this.number=appointment.getNumber();
         this.state=appointment.getState();
         this.profile=appointment.getProfile().getId();
-        this.doctor=appointment.getDoctor().getId();
+        this.doctorId=appointment.getDoctor().getId();
 
     }
 }

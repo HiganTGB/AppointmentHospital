@@ -3,6 +3,7 @@ package appointmenthospital.authservice.service;
 import appointmenthospital.authservice.log.CustomLogger;
 import appointmenthospital.authservice.model.dto.AppointmentDTO;
 import appointmenthospital.authservice.model.entity.Appointment;
+import appointmenthospital.authservice.model.entity.Doctor;
 import appointmenthospital.authservice.model.entity.QAppointment;
 import appointmenthospital.authservice.repository.AppointmentRepository;
 import com.querydsl.core.types.Predicate;
@@ -19,6 +20,7 @@ import java.util.List;
 @Service
 public class AppointmentService {
     private AppointmentRepository appointmentRepository;
+    private DoctorService doctorService;
     private CustomLogger logger;
     private QAppointment appointment=QAppointment.appointment;
 

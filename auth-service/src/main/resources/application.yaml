@@ -23,6 +23,19 @@ spring:
       username: user
       password: passpass
       driver-class-name: com.mysql.cj.jdbc.Driver
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: robotmailer1010@gmail.com
+    password: bgoz edtg nnyw wcua
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.smtp.debug: true
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 5000
+      mail.smtp.writetimeout: 5000
 application:
   security:
     jwt:
@@ -62,3 +75,6 @@ scheduleService:
   lastEnd : 17:00
   bigStepGap : 30
   stepGap : 7
+speedSms:
+  access-token: abc
+  sender: 0386152395

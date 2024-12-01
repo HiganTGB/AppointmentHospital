@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/v1/examinations")
+@RequestMapping("/api/v1/examination")
 public class ExaminationController {
     private ExaminationService examinationService;
     private PrescriptionService prescriptionService;

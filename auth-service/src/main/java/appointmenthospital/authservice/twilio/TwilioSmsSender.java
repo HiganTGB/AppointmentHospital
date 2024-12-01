@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("twilio")
+@Deprecated
 public class TwilioSmsSender{
     Map<String, String> otpMap = new HashMap<>();
     private Map<String, LocalDateTime> expirationMap = new HashMap<>();

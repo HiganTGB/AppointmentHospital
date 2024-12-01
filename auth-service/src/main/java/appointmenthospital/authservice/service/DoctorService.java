@@ -35,7 +35,7 @@ public class DoctorService {
         List<DoctorDTO> responses = doctors.getContent().stream().map(DoctorDTO::new).toList();
         return new PageImpl<DoctorDTO>(responses,doctors.getPageable(),doctors.getTotalElements());
     }
-    private Doctor getEntity(long id)
+    public Doctor getEntity(long id)
     {
         return doctorRepository.findById(id)
                 .orElseThrow(()->new EntityNotFoundException("Patient with " +id + "not found" ));

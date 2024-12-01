@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/v1/doctors")
+@RequestMapping("/api/v1/doctor")
 public class DoctorController {
     private final UserService userService;
 
