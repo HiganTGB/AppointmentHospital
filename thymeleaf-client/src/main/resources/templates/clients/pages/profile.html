@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="clients/layout :: layout('Hồ sơ', 'pageHeadSection', 'profile', 'pageContent')">
+<head>
+    <title></title>
+    <th:block th:fragment="pageHeadSection">
+        <link rel="stylesheet" th:href="@{/clients/css/pages/Page.css}">
+        <link rel="stylesheet" th:href="@{/clients/css/pages/ProfilePage.css}">
+    </th:block>
+</head>
+<body>
+<div th:fragment="pageContent" class="Profile Page">
+    <h2 class="title">Hồ sơ</h2>
+
+</div>
+</body>
+</html>

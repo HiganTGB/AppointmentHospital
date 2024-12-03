@@ -25,26 +25,51 @@ import java.util.concurrent.CompletableFuture;
 
 import static java.time.Duration.ofMinutes;
 
-@Getter
 @Service
 @RequiredArgsConstructor
 public class SchedulerService {
-
-    private int initFlags;
-    @Value("${#{ T(java.time.LocalTime).parse('${scheduleService.firstStart}')}")
+    @Value("#{T(java.time.LocalTime).parse('${scheduleService.firstStart}')}")
     private LocalTime _firstStart;
-    @Value("${#{ T(java.time.LocalTime).parse('${scheduleService.firstEnd}')}")
+    @Value("#{T(java.time.LocalTime).parse('${scheduleService.firstEnd}')}")
     private LocalTime _firstEnd;
-    @Value("${#{ T(java.time.LocalTime).parse('${scheduleService.lastStart}')}")
+    @Value("#{T(java.time.LocalTime).parse('${scheduleService.lastStart}')}")
     private LocalTime _lastStart;
-    @Value("${#{ T(java.time.LocalTime).parse('${scheduleService.lastEnd}')}")
+    @Value("#{T(java.time.LocalTime).parse('${scheduleService.lastEnd}')}")
     private LocalTime _lastEnd;
-    @Value("${#{ T(java.time.Duration).ofMinutes('${scheduleService.bigStepGap}')}")
+    @Value("#{T(java.time.Duration).ofMinutes(${scheduleService.bigStepGap})}")
     private Duration _bigStepGap;
-    @Value("${#{ T(java.time.Duration).ofMinutes('${scheduleService.stepGap}')}")
+    @Value("#{T(java.time.Duration).ofMinutes(${scheduleService.stepGap})}")
     private Duration _stepGap;
     private AppointmentRepository _appointmentRepository;
     private QAppointment appointment = QAppointment.appointment;
+
+    public SchedulerService(@Autowired AppointmentRepository appointmentRepository) {
+        _appointmentRepository = appointmentRepository;
+    }
+
+    public LocalTime getFirstStart() {
+        return _firstStart;
+    }
+
+    public LocalTime getFirstEnd() {
+        return _firstEnd;
+    }
+
+    public LocalTime getLastStart() {
+        return _lastStart;
+    }
+
+    public LocalTime getLastEnd() {
+        return _lastEnd;
+    }
+
+    public Duration getBigStepGap() {
+        return _bigStepGap;
+    }
+
+    public Duration getStepGap() {
+        return _stepGap;
+    }
 
     //    private LocalTime scaledEndOf(LocalTime end, LocalTime start) {
 //        Duration bigStepGap = _bigStepGap;
@@ -86,7 +111,7 @@ public class SchedulerService {
 //                list.add(part);
 //            }
 //
-//            this._parts = list;
+//            _parts = list;
 //        }
 //        return _parts;
     }
@@ -117,33 +142,30 @@ public class SchedulerService {
 //                allocationsList.add(schedulerAllocation);
 //                start = start.plusMinutes(_stepGap.toMinutes());
 //            }
-//            this._allocations=allocationsList;
+//            _allocations=allocationsList;
 //
 //        }
-//        return this._allocations;
+//        return _allocations;
     }
 
     SchedulerAllocation allocate(long doctorId, LocalDate date, LocalTime start, LocalTime end) {
         LocalDate now = LocalDate.now();
         if (date.compareTo(now) <= 0) return null;
-        SchedulerService s = this;
         if (start.compareTo(end) >= 0) return null;
-        if ((start.compareTo(s._firstStart) < 0
-                || end.compareTo(s._firstEnd) > 0)
-                && (start.compareTo(s._lastStart) < 0
-                || end.compareTo(s._lastEnd) > 0))
+        if ((start.compareTo(_firstStart) < 0
+                || end.compareTo(_firstEnd) > 0)
+                && (start.compareTo(_lastStart) < 0
+                || end.compareTo(_lastEnd) > 0))
             return null;
 
         Iterator<Appointment> it = _appointmentRepository.findAll(
                 appointment.doctor.id.eq(doctorId)
-                        .and(appointment.atTime.between(
-                                LocalDateTime.of(date, start),
-                                LocalDateTime.of(date, end))
-                        ),
+                        .and(appointment.atTime.goe(LocalDateTime.of(date, start)))
+                        .and(appointment.atTime.lt(LocalDateTime.of(date, end))),
                 appointment.atTime.asc()
         ).iterator();
         if (!it.hasNext()) {
-            for (SchedulerAllocation allocation : s.getAllocations()) {
+            for (SchedulerAllocation allocation : getAllocations()) {
                 LocalTime atTime = allocation.atTime;
                 if (start.compareTo(atTime) <= 0
                         && atTime.compareTo(end) < 0)
@@ -154,22 +176,24 @@ public class SchedulerService {
 
         LocalTime last;
         do last = it.next().getAtTime().toLocalTime(); while (it.hasNext());
-        last = last.plus(s._stepGap);
-        for (SchedulerAllocation allocation : s.getAllocations()) {
+        last = last.plus(_stepGap);
+        for (SchedulerAllocation allocation : getAllocations()) {
             if (allocation.atTime.equals(last))
                 return allocation;
         }
         return null;
     }
 
-    SchedulerAllocation allocate(int doctorId) {
+    SchedulerAllocation allocate(long doctorId) {
         LocalDateTime now = LocalDateTime.now(Clock.systemUTC());
         LocalDate dnow = now.toLocalDate();
         LocalTime tnow = now.toLocalTime();
 
         Iterator<Appointment> ait = _appointmentRepository.findAll(
-                appointment.atTime.between(now, LocalDateTime.of(
-                        dnow.plusDays(1), LocalTime.ofSecondOfDay(0))),
+                appointment.doctor.id.eq(doctorId)
+                        .and(appointment.atTime.gt(now))
+                        .and(appointment.atTime.lt(LocalDateTime.of(
+                                dnow.plusDays(1), LocalTime.ofSecondOfDay(0)))),
                 appointment.atTime.asc()
         ).iterator();
 

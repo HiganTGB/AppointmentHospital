@@ -11,7 +11,7 @@ spring:
     name: auth-service
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -19,10 +19,10 @@ spring:
         default_schema: account
     show-sql: true
   datasource:
-      url: jdbc:mysql://localhost:3307/appointmentHospital
-      username: user
-      password: passpass
-      driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/appointmentHospital
+    username: user
+    password: passpass
+    driver-class-name: com.mysql.cj.jdbc.Driver
   mail:
     host: smtp.gmail.com
     port: 587
@@ -69,12 +69,12 @@ twilio:
   auth-token:
   trial-number:
 scheduleService:
-  firstStart: 07:30
-  firstEnd : 11:30
-  lastStart : 13:00
-  lastEnd : 17:00
-  bigStepGap : 30
-  stepGap : 7
+  firstStart: '07:30'
+  firstEnd: '11:30'
+  lastStart: '13:00'
+  lastEnd: '17:00'
+  bigStepGap: 30
+  stepGap: 7
 speedSms:
   access-token: abc
   sender: 0386152395
