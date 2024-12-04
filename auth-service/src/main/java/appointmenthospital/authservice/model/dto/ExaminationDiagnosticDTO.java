@@ -1,9 +1,12 @@
 package appointmenthospital.authservice.model.dto;
 
 import appointmenthospital.authservice.model.entity.ExaminationDetail;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-
+@Data
+@NoArgsConstructor
 public class ExaminationDiagnosticDTO {
     private String name;
     private BigDecimal price;

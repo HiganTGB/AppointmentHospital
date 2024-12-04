@@ -3,8 +3,10 @@ package appointmenthospital.authservice.model.dto;
 import appointmenthospital.authservice.model.entity.Medicine;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class MedicineDTO {
     private long id;
     private String name;

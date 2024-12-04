@@ -35,10 +35,6 @@ public class SecurityConfiguration {
             "/auth-service/swagger-ui/**",
             "/auth-service/webjars/**",
             "/auth-service/swagger-ui.html"};
-    private static final String[] OPEN_FEIGN_URL ={
-            "/api/v1/doctor/{id}/domain"
-
-    };
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
@@ -50,8 +46,6 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req
                                 .requestMatchers(WHITE_LIST_URL)
-                                .permitAll()
-                                .requestMatchers(OPEN_FEIGN_URL)
                                 .permitAll()
                                 .requestMatchers("/api/v1/auth/forgot-password/*").permitAll()
                                 .requestMatchers("/api/v1/doctors/public/**","/api/v1/doctors/domain/**").permitAll()

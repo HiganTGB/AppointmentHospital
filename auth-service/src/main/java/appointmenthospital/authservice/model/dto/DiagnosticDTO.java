@@ -3,11 +3,14 @@ package appointmenthospital.authservice.model.dto;
 import appointmenthospital.authservice.model.entity.Diagnostic;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-@Getter
+@Data
+@NoArgsConstructor
 public class DiagnosticDTO {
 
     private long id;

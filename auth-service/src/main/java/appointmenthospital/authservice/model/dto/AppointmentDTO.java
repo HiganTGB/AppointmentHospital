@@ -2,12 +2,15 @@ package appointmenthospital.authservice.model.dto;
 
 import appointmenthospital.authservice.model.entity.Appointment;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-@Getter
+@Data
+@NoArgsConstructor
 public class AppointmentDTO {
     private long id;
     @JsonProperty("at")
