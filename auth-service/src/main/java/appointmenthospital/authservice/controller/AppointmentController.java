@@ -42,6 +42,7 @@ public class  AppointmentController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('UpdateRole')")
     public AppointmentDTO get(@PathVariable Long id) {
         return appointmentService.get(id);
     }

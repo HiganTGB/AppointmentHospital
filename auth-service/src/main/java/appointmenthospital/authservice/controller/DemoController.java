@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DemoController {
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ReadRole')")
+    @PreAuthorize("hasAuthority('UpdateRole')")
     public ResponseEntity<String> sayHello() {
         return ResponseEntity.ok("Hello from secured endpoint");
     }

@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Permission{
+    SystemPrivilege(0,"System"),
     ReadRole(1,"READ ROLE"),
     CreateRole(2,"CreateRole"),
     UpdateRole(3,"UpdateRole"),

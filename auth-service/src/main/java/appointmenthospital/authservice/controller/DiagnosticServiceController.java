@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +29,7 @@ public class DiagnosticServiceController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Operation(summary = "Page", description = "Get page + search by keyword")
+    @PreAuthorize("hasAuthority('ReadDiagnosticService')")
     public Page<DiagnosticDTO> getAll(@RequestParam(defaultValue = "", value = "search", required = false) String keyword,
                                       @RequestParam(defaultValue = "0", value = "page", required = false) int page,
                                       @RequestParam(value = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -42,6 +44,7 @@ public class DiagnosticServiceController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('ReadDiagnosticService')")
     public DiagnosticDTO get(@PathVariable Long id) {
         return diagnosticService.get(id);
     }
@@ -49,6 +52,7 @@ public class DiagnosticServiceController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('CreateDiagnosticService')")
     public DiagnosticDTO create(@RequestBody @Valid DiagnosticDTO dto) {
         return diagnosticService.create(dto);
     }
@@ -56,6 +60,7 @@ public class DiagnosticServiceController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('UpdateDiagnosticService')")
     public DiagnosticDTO update(@PathVariable Long id, @RequestBody @Valid DiagnosticDTO dto) {
         return diagnosticService.update(dto, id);
     }
@@ -63,6 +68,7 @@ public class DiagnosticServiceController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('DeleteDiagnosticService')")
     public Boolean delete(@PathVariable Long id) {
         return diagnosticService.delete(id);
     }
@@ -70,6 +76,7 @@ public class DiagnosticServiceController {
     @GetMapping("/examination")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('ReadDiagnosticService')")
     public Page<ExaminationDiagnosticDTO> getPagedExaminationDiagnostics(@RequestParam(defaultValue = "", value = "search", required = false) String keyword,
                                                                          @RequestParam(defaultValue = "0", value = "page", required = false) int page,
                                                                          @RequestParam(value = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -84,6 +91,7 @@ public class DiagnosticServiceController {
     @GetMapping("/{id}/examination")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('ReadDiagnosticService')")
     public ExaminationDiagnosticDTO getExaminationDiagnostic(@PathVariable long id,
                                                              @RequestParam(name = "examination", required = true) long examination) {
         return diagnosticService.getExamination(id, examination);
@@ -92,6 +100,7 @@ public class DiagnosticServiceController {
     @PostMapping("/{id}/examination")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('CreateExaminationDiagnostic')")
     public ExaminationDiagnosticDTO createExaminationDiagnostic(@PathVariable long id,
                                                                 @RequestParam(name = "examination", required = true) long examination,
                                                                 @RequestParam(name = "doctor", required = true) long doctor) {

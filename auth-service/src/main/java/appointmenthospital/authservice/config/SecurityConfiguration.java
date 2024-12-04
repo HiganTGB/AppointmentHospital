@@ -47,7 +47,7 @@ public class SecurityConfiguration {
                         req
                                 .requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers("/api/v1/auth/forgot-password/*").permitAll()
+                                .requestMatchers("/api/v1/auth/forgot-password/*","/api/v1/auth/phone").permitAll()
                                 .requestMatchers("/api/v1/doctors/public/**","/api/v1/doctors/domain/**").permitAll()
 //                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
 //                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
