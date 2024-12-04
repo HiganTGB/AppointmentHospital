@@ -1,0 +1,11 @@
+.App {
+    align-items: end;
+    background-color: var(--mdc-surface);
+    box-sizing: border-box;
+    color: var(--mdc-on-surface);
+    display: flex;
+    flex-flow: row wrap;
+    font-family: NotoSans;
+    gap: 8px;
+    padding: 8px;
+}
