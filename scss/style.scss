@@ -1182,17 +1182,18 @@ textarea {
         }
     }
     .profile-card-content {
-        h6 {
+        .title {
             color: $color-white;
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 700;
             display: block;
-            // margin-bottom: 1rem;
+            margin-bottom: 1rem;
         }
-        span {
+        span, b {
             color: $color-white;
-            font-size: 12px;
+            font-size: 16px;
             margin-bottom: 2px;
+            opacity: 85%;
         }
         a {
             background-color: $color-white;

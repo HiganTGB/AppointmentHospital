@@ -1265,16 +1265,18 @@ textarea {
 .profile-card .profile-card-thumbnail img {
   width: 100%;
 }
-.profile-card .profile-card-content h6 {
+.profile-card .profile-card-content .title {
   color: #ffffff;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   display: block;
+  margin-bottom: 1rem;
 }
-.profile-card .profile-card-content span {
+.profile-card .profile-card-content span, .profile-card .profile-card-content b {
   color: #ffffff;
-  font-size: 12px;
+  font-size: 16px;
   margin-bottom: 2px;
+  opacity: 85%;
 }
 .profile-card .profile-card-content a {
   background-color: #ffffff;
