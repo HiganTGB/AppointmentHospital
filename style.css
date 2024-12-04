@@ -2139,4 +2139,50 @@ textarea {
   color: #ffffff;
 }
 
+input[type=radio] {
+  width: 16px;
+  height: 16px;
+  margin: 8px;
+}
+
+input[type=submit] {
+  width: 100%;
+  margin-top: 20px;
+  padding: 15px 30px;
+  background-color: #f0f0f0;
+  display: block;
+  border-radius: 0 !important;
+  border: none;
+  font-size: 18px;
+  color: #081f3e;
+  background-color: #006cff;
+  color: #ffffff;
+  border-color: #006cff;
+}
+@media only screen and (max-width:767px) {
+  input[type=submit] {
+    border-color: #ffffff;
+  }
+}
+input[type=submit]:hover, input[type=submit]:focus {
+  border-color: #ffffff;
+}
+@media only screen and (min-width:992px) and (max-width:1199px) {
+  input[type=submit] {
+    padding: 15px;
+  }
+}
+@media only screen and (min-width:768px) and (max-width:991px) {
+  input[type=submit] {
+    padding: 15px;
+    font-size: 14px;
+  }
+}
+@media only screen and (max-width:767px) {
+  input[type=submit] {
+    padding: 10px;
+    font-size: 12px;
+  }
+}
+
 /*# sourceMappingURL=style.css.map */

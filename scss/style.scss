@@ -2007,3 +2007,40 @@ textarea {
         }
     }
 }
+input[type=radio]{
+    width: 16px;
+    height: 16px;
+    margin: 8px;
+}
+input[type=submit]{
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px 30px;
+    background-color: #f0f0f0;
+    display: block;
+    border-radius: 0 !important;
+    border: none;
+    font-size: 18px;
+    color: $heading-color;
+    background-color: $primary-color;
+    color: $color-white;
+    border-color: $primary-color;
+    @media #{$breakpoint-xs} {
+        border-color: $color-white;
+    }
+    &:hover,
+    &:focus {
+        border-color: $color-white;
+    }
+    @media #{$breakpoint-lg} {
+        padding: 15px;
+    }
+    @media #{$breakpoint-md} {
+        padding: 15px;
+        font-size: 14px;
+    }
+    @media #{$breakpoint-xs} {
+        padding: 10px;
+        font-size: 12px;
+    }
+}
