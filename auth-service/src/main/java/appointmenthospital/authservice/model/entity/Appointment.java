@@ -3,6 +3,7 @@ package appointmenthospital.authservice.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
@@ -28,4 +29,6 @@ public class Appointment extends BaseEntity{
     @OneToOne
     @JoinColumn(name = "examination_id")
     private Examination examination;
+    @Column(nullable = false)
+    private BigDecimal price;
 }

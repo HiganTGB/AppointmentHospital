@@ -5,17 +5,22 @@ import appointmenthospital.authservice.model.dto.AppointmentDTO;
 import appointmenthospital.authservice.model.entity.Appointment;
 import appointmenthospital.authservice.model.entity.Doctor;
 import appointmenthospital.authservice.model.entity.QAppointment;
+import appointmenthospital.authservice.payment.PaymentDTO;
+import appointmenthospital.authservice.payment.PaymentService;
 import appointmenthospital.authservice.repository.AppointmentRepository;
 import appointmenthospital.authservice.repository.DoctorRepository;
 import appointmenthospital.authservice.repository.ProfileRepository;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
@@ -25,12 +30,16 @@ public class AppointmentService {
     private final ProfileRepository profileRepository;
     private final AppointmentRepository appointmentRepository;
     private CustomLogger logger;
+    private PaymentService paymentService;
     private final QAppointment appointment = QAppointment.appointment;
+    @Value("${app.price}")
+    public BigDecimal price;
 
-    public AppointmentService(DoctorRepository doctorRepository, ProfileRepository profileRepository, AppointmentRepository appointmentRepository) {
+    public AppointmentService(DoctorRepository doctorRepository, ProfileRepository profileRepository, AppointmentRepository appointmentRepository, PaymentService paymentService) {
         this.doctorRepository = doctorRepository;
         this.profileRepository = profileRepository;
         this.appointmentRepository = appointmentRepository;
+        this.paymentService = paymentService;
     }
 
     public Page<AppointmentDTO> getPaged(String keyword, Pageable pageable, Long doctor_id, Long profile_id, Long patient_id) {
@@ -64,14 +73,26 @@ public class AppointmentService {
         return new AppointmentDTO(getEntity(id));
     }
 
-    public AppointmentDTO create(AppointmentDTO dto) {
+    public AppointmentDTO create(AppointmentDTO dto, HttpServletRequest request) {
         Appointment profile = Appointment.builder()
                 .doctor(doctorRepository.findById(dto.getDoctorId()).orElseThrow())
                 .profile(profileRepository.findById(dto.getProfile()).get())
                 .number((int) dto.getNumber())
                 .atTime(dto.getAtTime())
                 .state((int) dto.getState())
+                .price(price)
                 .build();
-        return new AppointmentDTO(appointmentRepository.save(profile));
+        profile=appointmentRepository.save(profile);
+        PaymentDTO.VNPayResponse vnPayResponse=paymentService.createVnPayPayment(request,profile.getPrice(),String.valueOf(profile.getId()));
+        AppointmentDTO result=new AppointmentDTO(profile);
+        result.setPayment(vnPayResponse.paymentUrl);
+        return result;
+    }
+    public Boolean pay(long id) {
+        Appointment profile = getEntity(id);
+        profile.setState(2);
+        profile=appointmentRepository.save(profile);
+        AppointmentDTO result=new AppointmentDTO(profile);
+        return true;
     }
 }

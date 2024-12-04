@@ -1,5 +1,6 @@
 app:
   name: auth-service
+  price: 50000
 eureka:
   client:
     serviceUrl:
@@ -86,9 +87,9 @@ speedSms:
 payment:
   vnPay:
     url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-    tmnCode: 123
-    secretKey: 1234232
-    returnUrl: http://localhost:10006/api/v1/payment/vn-pay-callback
+    tmnCode: IPI1DOLE
+    secretKey: 9WIAKP6VVQQRKF2EHKUEDBMD171MHO8F
+    returnUrl: http://localhost:10001/api/v1/appointment/vn-pay-callback
     version: 2.1.0
     command: pay
     orderType: other
