@@ -1,5 +1,7 @@
 package appointmenthospital.authservice.service;
 
+import appointmenthospital.authservice.email.Mail;
+import appointmenthospital.authservice.email.MailService;
 import appointmenthospital.authservice.log.CustomLogger;
 import appointmenthospital.authservice.model.dto.AppointmentDTO;
 import appointmenthospital.authservice.model.entity.Appointment;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -31,7 +34,9 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private CustomLogger logger;
     private PaymentService paymentService;
+    private MailService mailService;
     private final QAppointment appointment = QAppointment.appointment;
+
     @Value("${app.price}")
     public BigDecimal price;
 
@@ -93,6 +98,43 @@ public class AppointmentService {
         profile.setState(2);
         profile=appointmentRepository.save(profile);
         AppointmentDTO result=new AppointmentDTO(profile);
+        mail(profile);
         return true;
+    }
+
+
+    public Boolean mail(Appointment appointment)
+    {
+        try
+        {
+            String to = appointment.getProfile().getPatient().getUser().getEmail();
+            String subject = "Xác nhận đặt lịch khám bệnh";
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss");
+            String content= String.format("Kính gửi quý khách,\n" +
+                    "\n" +
+                    "Chúng tôi xin xác nhận lịch khám bệnh của quý khách đã được đặt thành công.\n" +
+                    "\n" +
+                    "**Thông tin lịch khám:**\n" +
+                    "  - Mã khám: %s \n" +
+                    "  - Ngày khám: %s \n" +
+                    "  - Giờ khám: %s\n" +
+                    "  - Bác sĩ: %s\n" +
+                    "\n" +
+                    "Vui lòng mang theo giấy tờ tùy thân và kết quả xét nghiệm (nếu có) khi đến khám.\n" +
+                    "\n" +
+                    "Trân trọng,\n" +
+                    "Phòng khám",appointment.getId(),appointment.getAtTime().format(formatter),appointment.getAtTime().format(formatterTime),appointment.getDoctor().getUser().getFullName());
+            Mail mail=new Mail();
+            mail.setMailTo(to);
+            mail.setMailSubject(subject);
+            mail.setMailContent(content);
+            mailService.sendEmail(mail);
+            return true;
+        }catch (Exception e)
+        {
+            return false;
+        }
+
     }
 }
