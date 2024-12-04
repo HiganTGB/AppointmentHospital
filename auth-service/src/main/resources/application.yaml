@@ -69,12 +69,12 @@ twilio:
   auth-token:
   trial-number:
 scheduleService:
-  firstStart: 07:30
-  firstEnd : 11:30
-  lastStart : 13:00
-  lastEnd : 17:00
-  bigStepGap : 30
-  stepGap : 7
+  firstStart: "07:30"
+  firstEnd: "11:30"
+  lastStart: "13:00"
+  lastEnd: "17:00"
+  bigStepGap: "PT30M"
+  stepGap: "PT7M"
 speedSms:
   access-token: DGbph-1O7DjsmdX5jyFtytIm1sKAwXyd
   sender: 84386152395

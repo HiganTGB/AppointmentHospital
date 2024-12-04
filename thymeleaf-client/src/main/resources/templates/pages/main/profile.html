@@ -9,7 +9,7 @@
         <div class="container-xl">
             <div class="row g-2 align-items-center">
                 <div class="col">
-                    <h2 class="page-title"> My Profile</h2>
+                    <h2 class="page-title">My Profile</h2>
                 </div>
             </div>
         </div>
@@ -57,12 +57,12 @@
                             <div class="row g-3 mt-3 mb-3">
                                 <div class="col-md">
                                     <div class="form-label">Khoa</div>
-                                    <input name="khoa" type="text" class="form-control" th:value="${thanhVien.khoa}"
+                                    <input name="khoa" type="text" class="form-control" th:value="${thanhVien.full_name}"
                                            readonly>
                                 </div>
                                 <div class="col-md">
                                     <div class="form-label">Ngành</div>
-                                    <input name="nganh" type="text" class="form-control" th:value="${thanhVien.nganh}"
+                                    <input name="nganh" type="text" class="form-control" th:value="${thanhVien.gender}"
                                            readonly>
                                 </div>
                             </div>

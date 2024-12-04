@@ -31,17 +31,17 @@ import static java.time.Duration.ofMinutes;
 public class SchedulerService {
 
     private int initFlags;
-    @Value("${#{ T(java.time.LocalTime).parse('${scheduleService.firstStart}')}")
+    @Value("${scheduleService.firstStart}")
     private LocalTime _firstStart;
-    @Value("${#{ T(java.time.LocalTime).parse('${scheduleService.firstEnd}')}")
+    @Value("${scheduleService.firstEnd}")
     private LocalTime _firstEnd;
-    @Value("${#{ T(java.time.LocalTime).parse('${scheduleService.lastStart}')}")
+    @Value("${scheduleService.lastStart}")
     private LocalTime _lastStart;
-    @Value("${#{ T(java.time.LocalTime).parse('${scheduleService.lastEnd}')}")
+    @Value("${scheduleService.lastEnd}")
     private LocalTime _lastEnd;
-    @Value("${#{ T(java.time.Duration).ofMinutes('${scheduleService.bigStepGap}')}")
+    @Value("${scheduleService.bigStepGap}")
     private Duration _bigStepGap;
-    @Value("${#{ T(java.time.Duration).ofMinutes('${scheduleService.stepGap}')}")
+    @Value("${scheduleService.stepGap}")
     private Duration _stepGap;
     private AppointmentRepository _appointmentRepository;
     private QAppointment appointment = QAppointment.appointment;
