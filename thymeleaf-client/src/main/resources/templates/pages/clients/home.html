@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" th:with="logged=false"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title></title>
+    <th:block th:fragment="pageHeadSection">
+        <link rel="stylesheet" th:href="@{/templates/pages/clients/css/pages/Page.css}">
+        <link rel="stylesheet" th:href="@{/templates/pages/clients/css/pages/HomePage.css}">
+    </th:block>
+</head>
+<body>
+<div layout:replace="layouts/client">
+    <div layout:fragment="menu">
+    </div>
+    <div layout:fragment="content">
+        <h2 class="title">Giới thiệu</h2>
+    </div>
+</div>
+</body>
+</html>

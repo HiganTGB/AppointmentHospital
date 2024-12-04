@@ -61,10 +61,10 @@ public class AuthenticationService {
         {
             throw new IllegalStateException("Email already exists");
         }
-//        if(smsSender.validateOTP(request.getOtp(),request.getPhone()))
-//        {
-//            throw new IllegalStateException("Invalid OTP");
-//        }
+        if(smsSender.validateOTP(request.getOtp(),request.getPhone()))
+        {
+            throw new IllegalStateException("Invalid OTP");
+        }
         var user = User.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())

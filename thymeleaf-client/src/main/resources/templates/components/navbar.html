@@ -1,5 +1,4 @@
-<header th:fragment="navbar" class="navbar navbar-expand-md d-print-none"
->
+<header th:fragment="navbar" class="navbar navbar-expand-md d-print-none">
     <div class="container-xl">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu"
                 aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
@@ -12,7 +11,7 @@
         </h1>
         <div class="navbar-nav flex-row order-md-last">
             <div class="nav-item d-none d-md-flex me-3">
-
+                <a href="login" class="btn btn-primary hide" id="navbar-login-btn">Log in</a>
             </div>
             <div class="d-none d-md-flex me-2">
                 <a href="?theme=dark" class="nav-link px-0 hide-theme-dark" title="Enable dark mode"
@@ -39,7 +38,7 @@
                     </svg>
                 </a>
             </div>
-            <div class="nav-item dropdown">
+            <div class="nav-item dropdown" id="navbar-avatar-action">
                 <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
                    aria-label="Open user menu">
 <!--                    <span class="avatar avatar-sm" style="background-image: url('/images/default_avatar.jpg')"></span>-->

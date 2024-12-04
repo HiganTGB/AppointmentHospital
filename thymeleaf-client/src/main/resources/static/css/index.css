@@ -7,3 +7,11 @@
 body {
     font-feature-settings: "cv03", "cv04", "cv11";
 }
+
+.hide {
+    opacity: 0;
+    height: 0px;
+    width: 0px;
+    margin: 0px;
+    padding: 0px;
+}

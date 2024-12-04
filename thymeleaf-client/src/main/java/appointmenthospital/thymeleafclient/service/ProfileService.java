@@ -1,6 +1,6 @@
 package appointmenthospital.thymeleafclient.service;
 
-import appointmenthospital.thymeleafclient.dto.ProfileDTO;
+import appointmenthospital.thymeleafclient.model.authservice.ProfileDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.stereotype.Service;
