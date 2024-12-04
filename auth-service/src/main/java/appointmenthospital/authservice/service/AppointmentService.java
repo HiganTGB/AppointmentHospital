@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -51,6 +52,14 @@ public class AppointmentService {
         }
         Page<Appointment> appointments = predicate == null ? appointmentRepository.findAll(pageable)
                 : appointmentRepository.findAll(predicate, pageable);
+        List<AppointmentDTO> response = appointments.stream().map(AppointmentDTO::new).toList();
+        return new PageImpl<>(response, appointments.getPageable(), appointments.getTotalElements());
+    }
+
+    public Page<AppointmentDTO> getPaged(String keyword, Pageable pageable, Long patient_id) {
+        BooleanExpression byPatient = QAppointment.appointment.profile.patient.user.id.eq(patient_id);
+        BooleanExpression inFuture = QAppointment.appointment.atTime.gt(LocalDateTime.now());
+        Page<Appointment> appointments = appointmentRepository.findAll(byPatient.and(inFuture), pageable);
         List<AppointmentDTO> response = appointments.stream().map(AppointmentDTO::new).toList();
         return new PageImpl<>(response, appointments.getPageable(), appointments.getTotalElements());
     }

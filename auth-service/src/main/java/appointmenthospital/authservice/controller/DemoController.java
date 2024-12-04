@@ -52,16 +52,16 @@ public class DemoController {
         patient = roleService.create(patient);
 
         DoctorDTO d1 = new DoctorDTO(Doctor.builder()
-                .user(User.builder().fullName("Nguyễn Văn A").email("doctor00001@gmail.com").phone("0123456789").password(passwordEncoder.encode("B@ch2003")).role(roleService.getEntity(admin.getId())).build())
+                .user(User.builder().fullName("Nguyễn Văn A").email("doctor00001@gmail.com").phone("0123456789").password(passwordEncoder.encode("Bach2003")).role(roleService.getEntity(admin.getId())).build())
                 .position("Răng hàm mặt").certificate("certificate").gender(Gender.M).build()), d2 = new DoctorDTO(Doctor.builder()
-                .user(User.builder().fullName("Nguyễn Văn B").email("doctor00002@gmail.com").phone("0123456689").password(passwordEncoder.encode("B@ch2003")).role(roleService.getEntity(doctor.getId())).build())
+                .user(User.builder().fullName("Nguyễn Văn B").email("doctor00002@gmail.com").phone("0123456689").password(passwordEncoder.encode("Bach2003")).role(roleService.getEntity(doctor.getId())).build())
                 .position("Tai mũi họng").certificate("certificate").gender(Gender.F).build());
         d1 = doctorService.create(d1);
         d2 = doctorService.create(d2);
         PatientDTO p1 = new PatientDTO(Patient.builder()
-                .user(User.builder().fullName("Nguyễn Văn C").email("patient00001@gmail.com").phone("0122456789").password(passwordEncoder.encode("B@ch2003")).role(roleService.getEntity(patient.getId())).build())
+                .user(User.builder().fullName("Nguyễn Văn C").email("patient00001@gmail.com").phone("0122456789").password(passwordEncoder.encode("Bach2003")).role(roleService.getEntity(patient.getId())).build())
                 .build()), p2 = new PatientDTO(Patient.builder()
-                .user(User.builder().fullName("Nguyễn Văn D").email("patient00002@gmail.com").phone("0124456689").password(passwordEncoder.encode("B@ch2003")).role(roleService.getEntity(patient.getId())).build())
+                .user(User.builder().fullName("Nguyễn Văn D").email("patient00002@gmail.com").phone("0124456689").password(passwordEncoder.encode("Bach2003")).role(roleService.getEntity(patient.getId())).build())
                 .build());
         p1 = patientService.create(p1);
         p2 = patientService.create(p2);

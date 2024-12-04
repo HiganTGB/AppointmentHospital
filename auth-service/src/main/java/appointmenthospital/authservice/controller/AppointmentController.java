@@ -6,10 +6,7 @@ import appointmenthospital.authservice.model.entity.Appointment;
 import appointmenthospital.authservice.model.entity.Doctor;
 import appointmenthospital.authservice.model.entity.Profile;
 import appointmenthospital.authservice.model.entity.SchedulerAllocation;
-import appointmenthospital.authservice.service.AppointmentService;
-import appointmenthospital.authservice.service.DoctorService;
-import appointmenthospital.authservice.service.ProfileService;
-import appointmenthospital.authservice.service.SchedulerService;
+import appointmenthospital.authservice.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,7 +29,8 @@ public class AppointmentController {
     private final SchedulerService schedulerService;
     private final DoctorService doctorService;
     private final ProfileService profileService;
-    private AppointmentService appointmentService;
+    private final UserService userService;
+    private final AppointmentService appointmentService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -51,6 +50,24 @@ public class AppointmentController {
         Pageable pageable = PageRequest.of(page, 10, sort); // Assuming a page size of 10
 
         return appointmentService.getPaged(keyword, pageable, doctor_id, profile_id, patient_id);
+    }
+
+    @GetMapping("/user/current")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @Operation(summary = "Page", description = "Get page + search by keyword")
+    public Page<AppointmentDTO> getAll(@RequestParam(defaultValue = "", value = "search", required = false) String keyword,
+                                       @RequestParam(defaultValue = "0", value = "page", required = false) int page,
+                                       @RequestParam(value = "sortBy", required = false, defaultValue = "atTime") String sortBy,
+                                       @RequestParam(value = "orderBy", required = false, defaultValue = "ASC") String orderBy,
+                                       Principal connectedUser
+
+    ) {
+        Sort sort = Sort.by(orderBy.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
+
+        Pageable pageable = PageRequest.of(page, 10, sort); // Assuming a page size of 10
+
+        return appointmentService.getPaged(keyword, pageable, userService.get(connectedUser).getId());
     }
 
     @GetMapping("/{id}")

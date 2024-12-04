@@ -5,6 +5,7 @@ import appointmenthospital.authservice.model.dto.RoleDTO;
 import appointmenthospital.authservice.model.entity.Permission;
 import appointmenthospital.authservice.model.entity.Role;
 import appointmenthospital.authservice.service.ProfileService;
+import appointmenthospital.authservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -17,26 +18,43 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/profile")
 @RequiredArgsConstructor
 public class ProfileController {
-    private ProfileService profileService;
+    private final ProfileService profileService;
+    private final UserService userService;
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Operation(summary = "Page", description = "Get page + search by keyword")
-    public Page<ProfileDTO> getAll(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
+    public List<ProfileDTO> getAll(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
                                    @RequestParam(defaultValue = "0",value = "page",required =false)int page,
-                                   @RequestParam(value="sortBy" ,required = false,defaultValue = "id") String sortBy,
+                                   @RequestParam(value="sortBy" ,required = false,defaultValue = "fullName") String sortBy,
                                    @RequestParam(value="orderBy" ,required = false,defaultValue = "ASC") String orderBy) {
         Sort sort = Sort.by(orderBy.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
 
         Pageable pageable = PageRequest.of(page, 10, sort); // Assuming a page size of 10
 
-        return profileService.getPaged(keyword,pageable);
+        return profileService.getPaged(keyword,pageable).getContent();
+    }
+    @GetMapping("/user/current")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @Operation(summary = "Page", description = "Get page + search by keyword")
+    public List<ProfileDTO> getAll(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
+                                   @RequestParam(defaultValue = "0",value = "page",required =false)int page,
+                                   @RequestParam(value="sortBy" ,required = false,defaultValue = "fullName") String sortBy,
+                                   @RequestParam(value="orderBy" ,required = false,defaultValue = "ASC") String orderBy, Principal connectedUser) {
+        Sort sort = Sort.by(orderBy.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
+
+        Pageable pageable = PageRequest.of(page, 10, sort); // Assuming a page size of 10
+
+        return profileService.getPaged(keyword,pageable, userService.get(connectedUser).getId()).getContent();
     }
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)

@@ -39,26 +39,24 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final CustomLogger logger;
     private final UserService userService;
-    private final SpeedSMSAPI smsSender=new SpeedSMSAPI();
-    public boolean sentOTP(String phone)
-    {
+    private final SpeedSMSAPI smsSender = new SpeedSMSAPI();
+
+    public boolean sentOTP(String phone) {
         try {
-            String otp= smsSender.sentOtp(phone);
+            String otp = smsSender.sentOtp(phone);
             return true;
-        }catch (AppException e)
-        {
+        } catch (AppException e) {
             return false;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
     public AuthenticationResponse register(RegisterRequest request) {
-        if(phoneExist(request.getPhone()))
-        {
+        if (phoneExist(request.getPhone())) {
             throw new IllegalStateException("Phone already exists");
         }
-        if(emailExist(request.getEmail()))
-        {
+        if (emailExist(request.getEmail())) {
             throw new IllegalStateException("Email already exists");
         }
 //        if(smsSender.validateOTP(request.getOtp(),request.getPhone()))
@@ -86,6 +84,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        logger.log(this.getClass().toString(), request.getPhone() + " " + request.getPassword());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getPhone(),
@@ -98,7 +97,7 @@ public class AuthenticationService {
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
-        logger.log(this.getClass().toString(),"User with id "+ user.getId() + " login success");
+        logger.log(this.getClass().toString(), "User with id " + user.getId() + " login success");
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -134,7 +133,7 @@ public class AuthenticationService {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String userPhone;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
         refreshToken = authHeader.substring(7);
@@ -162,28 +161,27 @@ public class AuthenticationService {
                 .orElseThrow();
 
         try {
-            String otp= smsSender.sentOtp(phone);
+            String otp = smsSender.sentOtp(phone);
             return true;
-        }catch (AppException e)
-        {
+        } catch (AppException e) {
             return false;
         } catch (IOException e) {
             return false;
         }
     }
-    public String authResetOTPPassword(String otp,String phone)
-    {
-        smsSender.validateOTP(otp,phone);
-        String token= UUID.randomUUID().toString();
+
+    public String authResetOTPPassword(String otp, String phone) {
+        smsSender.validateOTP(otp, phone);
+        String token = UUID.randomUUID().toString();
         var user = repository.findByPhone(phone)
                 .orElseThrow();
-        PasswordResetToken resetToken=new PasswordResetToken(token,user);
+        PasswordResetToken resetToken = new PasswordResetToken(token, user);
         passwordResetTokenRepository.save(resetToken);
         return token;
     }
-    public AuthenticationResponse resetPassword(PasswordResetDTO dto)
-    {
-        PasswordResetToken token=passwordResetTokenRepository.getByToken(dto.getToken());
+
+    public AuthenticationResponse resetPassword(PasswordResetDTO dto) {
+        PasswordResetToken token = passwordResetTokenRepository.getByToken(dto.getToken());
         var user = repository.findByPasswordResetToken(token)
                 .orElseThrow();
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
@@ -200,13 +198,16 @@ public class AuthenticationService {
     private boolean emailExist(String email) {
         return repository.existsByEmail(email);
     }
+
     private boolean phoneExist(String phone) {
         return repository.existsByPhone(phone);
     }
-    private boolean emailExist(String email,String oldEmail) {
-        return repository.existsByEmailAndEmailNotLike(email,oldEmail);
+
+    private boolean emailExist(String email, String oldEmail) {
+        return repository.existsByEmailAndEmailNotLike(email, oldEmail);
     }
-    private boolean phoneExist(String phone,String oldPhone) {
-        return repository.existsByPhoneAndPhoneNotLike(phone,oldPhone);
+
+    private boolean phoneExist(String phone, String oldPhone) {
+        return repository.existsByPhoneAndPhoneNotLike(phone, oldPhone);
     }
 }

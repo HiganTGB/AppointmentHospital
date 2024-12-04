@@ -3,44 +3,59 @@ import { apiServer } from "../utils/api";
 import { getAccessToken } from "./auth";
 import { json } from "stream/consumers";
 import { count } from "console";
+import { getProfile, getProfiles } from "./profile";
+import { escape } from "querystring";
 
-type BaseProfileErrorResponse = {
+type BaseAppointmentErrorResponse = {
     type: "error";
     message?: string;
 }
 
-export type ProfileRequest = {
-    patient?: number;
-    full_name?: string;
-    birthdate?: string;
-    gender?: 'M' | 'F';
+export type AppointmentRequest = {
+    date?: string;
+    begin_time?: string;
+    end_time?: string;
+    profile?: number;
+    doctor?: number;
 }
 
-export type Profile = {
+export type Appointment = {
     id?: number;
-    patient?: number;
-    full_name?: string;
-    date_of_birth?: string;
-    gender?: 'M' | 'F';
+    at?: string;
+    number?: number;
+    state?: number;
+    profile?: number;
+    doctor?: number;
 }
 
-export type ProfileResponse = BaseProfileErrorResponse | (Profile & {
+export type FutureAppointment = {
+    id?: number;
+    at?: string;
+    number?: number;
+    profile_fullname?: string;
+}
+
+export type AppointmentResponse = BaseAppointmentErrorResponse | (Appointment & {
     type: "ok";
 })
 
-export type CreateProfileResponse = BaseProfileErrorResponse | {
+export type CreateAppointmentResponse = BaseAppointmentErrorResponse | {
     type: "ok";
     message?: string;
 }
 
-export type ProfilesResponse = BaseProfileErrorResponse | (Profile[] & {
+export type AppointmentsResponse = BaseAppointmentErrorResponse | (Appointment[] & {
     type: "ok";
 })
 
-export async function getProfiles(): Promise<ProfilesResponse> {
+export type FutureAppointmentsResponse = BaseAppointmentErrorResponse | (FutureAppointment[] & {
+    type: "ok";
+})
+
+export async function getAppointments(): Promise<AppointmentsResponse> {
     try {
         const token = getAccessToken();
-        const response: Response = await fetch(apiServer + "v1/profile/user/current", {
+        const response: Response = await fetch(apiServer + "v1/appointment/user/current", {
             headers: (token ? { "Authorization": `Bearer ${token}` } : {}),
             method: "GET"
         });
@@ -63,15 +78,40 @@ export async function getProfiles(): Promise<ProfilesResponse> {
     }
 }
 
-export async function createProfile(request: ProfileRequest): Promise<CreateProfileResponse> {
+export async function getFutureAppointments(): Promise<FutureAppointmentsResponse> {
+    const appointments = await getAppointments();
+    if (appointments.type == "ok") {
+        const result = await Promise.all(appointments.map(async function (v) {
+            if (v.profile) {
+                const profile = await getProfile(v.profile);
+                if (profile.type == "ok") {
+                    return {
+                        id: v.id,
+                        at: v.at,
+                        number: v.number,
+                        profile_fullname: profile.full_name
+                    };
+                }
+            }
+            return {
+                id: v.id,
+                at: v.at,
+                number: v.number
+            };
+        })) as any;
+        result.type = "ok";
+        return result;
+    } else return appointments;
+}
+
+export async function createAppointment(request: AppointmentRequest): Promise<CreateAppointmentResponse> {
     try {
         const token = getAccessToken();
-        const response: Response = await fetch(apiServer + "v1/profile", {
+        const response: Response = await fetch(apiServer + `v1/appointment?date=${encodeURIComponent(request.date || '')}&start=${encodeURIComponent(request.begin_time || '')}&end=${encodeURIComponent(request.end_time || '')}&doctor=${encodeURIComponent(request.doctor || '')}&profile=${encodeURIComponent(request.profile || '')}`, {
             headers: {
                 "Content-Type": "application/json",
                 ...(token ? { "Authorization": `Bearer ${token}` } : {})
             },
-            body: JSON.stringify(request),
             method: "POST"
         });
         if ((response.status / 400) == 1) return {
@@ -92,10 +132,10 @@ export async function createProfile(request: ProfileRequest): Promise<CreateProf
     }
 }
 
-export async function getProfile(id: number): Promise<ProfileResponse> {
+export async function getAppointment(id: number): Promise<AppointmentsResponse> {
     try {
         const token = getAccessToken();
-        const response: Response = await fetch(apiServer + "v1/profile/" + id, {
+        const response: Response = await fetch(apiServer + "v1/appointment/" + id, {
             headers: (token ? { "Authorization": `Bearer ${token}` } : {}),
             method: "GET"
         });

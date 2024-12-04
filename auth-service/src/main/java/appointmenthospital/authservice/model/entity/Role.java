@@ -27,7 +27,7 @@ public class Role extends BaseEntity {
     private String name;
     @Column(name = "description",nullable = true)
     private String description;
-    @Column(columnDefinition = "binary(60)")
+    @Column(name = "permissions", length = 60)
     private byte[] permissions=new byte[PERMISSIONS_STRING_LIMIT];
 
     @OneToMany(mappedBy = "role",fetch = FetchType.LAZY)

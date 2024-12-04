@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/doctor")
@@ -40,7 +41,7 @@ public class DoctorController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Operation(summary = "Page", description = "Get page + search by keyword")
-    public Page<DoctorDTO> getAll(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
+    public List<DoctorDTO> getAll(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
                                   @RequestParam(defaultValue = "0",value = "page",required =false)int page,
                                   @RequestParam(value="sortBy" ,required = false,defaultValue = "id") String sortBy,
                                   @RequestParam(value="orderBy" ,required = false,defaultValue = "ASC") String orderBy) {
@@ -48,7 +49,7 @@ public class DoctorController {
 
         Pageable pageable = PageRequest.of(page, 10, sort); // Assuming a page size of 10
 
-        return doctorService.getPaged(keyword,pageable);
+        return doctorService.getPaged(keyword,pageable).getContent();
     }
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)

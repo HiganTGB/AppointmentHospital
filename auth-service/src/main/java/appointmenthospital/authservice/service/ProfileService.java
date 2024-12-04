@@ -38,6 +38,13 @@ public class ProfileService {
         List<ProfileDTO> responses = profiles.getContent().stream().map(ProfileDTO::new).toList();
         return new PageImpl<ProfileDTO>(responses,profiles.getPageable(),profiles.getTotalElements());
     }
+    public Page<ProfileDTO> getPaged(String keyword, Pageable pageable, Long user_id)
+    {
+        BooleanExpression byName= profile.fullName.contains(keyword).and(profile.patient.user.id.eq(user_id));
+        Page<Profile> profiles=profileRepository.findAll(byName,pageable);
+        List<ProfileDTO> responses = profiles.getContent().stream().map(ProfileDTO::new).toList();
+        return new PageImpl<ProfileDTO>(responses,profiles.getPageable(),profiles.getTotalElements());
+    }
     public Profile getEntity(long id)
     {
         return profileRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Profile not found"));
