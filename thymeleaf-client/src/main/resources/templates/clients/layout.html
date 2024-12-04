@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      th:fragment="layout(pageTitle, pageHeadSection, activeNavigation, content)">
+<head>
+    <meta charset="utf-8"/>
+    <link rel="icon" th:href="@{/svg/favicon.ico}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="theme-color" content="#000000"/>
+    <meta name="description" content=""/>
+
+    <link rel="stylesheet" th:href="@{/clients/fonts/mdi.css}"/>
+    <link rel="stylesheet" th:href="@{/clients/fonts/noto.css}"/>
+
+    <title th:text="(${pageTitle} == null ? pageTitle + ' - ' : '') + 'Phòng khám ABC'"></title>
+
+    <script th:src="@{/clients/js/utils/log.js}"></script>
+    <script th:src="@{/clients/js/colors/themeLoader.js}"></script>
+    <script th:src="@{/clients/js/colors/themeRegister.js}"></script>
+
+    <link rel="stylesheet" th:href="@{/clients/css/App.css}"/>
+    <link rel="stylesheet" th:href="@{/clients/css/components/Card.css}"/>
+    <link rel="stylesheet" th:href="@{/clients/css/components/Button.css}"/>
+
+    <th:block th:replace=":: ${pageHeadSection}"/>
+</head>
+<body>
+<noscript>You need to enable JavaScript to run this app.</noscript>
+<div id="root">
+    <div class="App" mdc-theme="system">
+        <div th:replace="clients/components/cards :: Card('Phòng khám xxxxx xxxxx xxxxx', null, 'width: 100%;')"></div>
+        <!--/*@thymesVar id="user" type="appointmenthospital.thymeleafclient.model.UserDTO"*/-->
+        <div th:replace="clients/components/cards :: AccountCard((${user} != null ? ${user.fullName} : null), ' ' + (${user} != null ? ${user.phone} : null), @{/svg/favicon.ico}, '')"></div>
+        <div th:if="${activeNavigation} == 'disabled'" class="Nav Card">
+            <a th:class="${activeNavigation} == 'scheduler' ? 'Item active' : 'Item'" th:href="@{/schedule}">
+                <span class="mdi"
+                      th:utext="${activeNavigation} == 'scheduler' ? '&#xDB82;&#xDEA0;' : '&#xDB86;&#xD855;'"></span>Đặt
+                lịch
+            </a>
+            <a th:class="${activeNavigation} == 'appointment' ? 'Item active' : 'Item'" th:href="@{/appointment}">
+                <span class="mdi">&#xDB82;&#xDED2;</span>Lịch đã đặt
+            </a>
+            <a th:class="${activeNavigation} == 'profile' ? 'Item active' : 'Item'" th:href="@{/profile}">
+                <span class="mdi"
+                      th:utext="${activeNavigation} == 'profile' ? '&#xDB80;&#xDC06;' : '&#xDB80;&#xDC07;'"></span>Hồ sơ
+            </a>
+            <a th:class="${activeNavigation} == 'about' ? 'Item active' : 'Item'" th:href="@{/}">
+                <span class="mdi"
+                      th:utext="${activeNavigation} == 'about' ? '&#xDB82;&#xDEFC;' : '&#xDB87;&#xDC66;'"></span>Giới
+                thiệu
+            </a>
+        </div>
+        <th:block th:replace=":: ${content}"/>
+    </div>
+</div>
+</body>
+</html>

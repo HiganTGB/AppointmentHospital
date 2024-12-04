@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      th:replace="clients/layout :: layout('Giới thiệu', 'pageHeadSection', 'about', 'pageContent')">
+<head>
+    <title></title>
+    <th:block th:fragment="pageHeadSection">
+        <link rel="stylesheet" th:href="@{/clients/css/pages/Page.css}">
+        <link rel="stylesheet" th:href="@{/clients/css/pages/HomePage.css}">
+    </th:block>
+</head>
+<body>
+<div th:fragment="pageContent" class="Home Page">
+    <h2 class="title">Giới thiệu</h2>
+
+</div>
+</body>
+</html>

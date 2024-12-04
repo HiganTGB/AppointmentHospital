@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Card Components</title>
+</head>
+<body>
+<div th:fragment="Card(heading, description, style)" class="Card" th:attr="style=${style}">
+    <h1 class="heading" th:text="${heading}"></h1>
+    <div class="description"
+         th:text="${description != null} ? ${description} : 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas expedita voluptatibus molestiae nihil? Sapiente ab, hic accusamus dolor fuga laborum voluptates omnis, maiores aliquid explicabo adipisci iusto dolore corrupti facilis!'"></div>
+</div>
+<div th:fragment="AccountCard(fullname, username, imageURL, style)" class="Account Card" th:attr="style=${style}">
+    <div class="avatar" th:with="con=(${fullname} != null && ${username} != null && ${imageURL} != null)">
+        <img th:if="con" class="img" src={props.imageURL} alt="Ảnh đại diện"/>
+        <span th:if="!con" class="img mdi">&#xDB82;&#xDF55;</span>
+        <!--        <FilledButton content={props.name && props.username ? "Đăng xuất" : "Đăng nhập"} />-->
+    </div>
+    <div class="info" th:with="con=(${fullname} != null && ${username} != null)">
+        <h1 th:if="con" class="name" th:text="${fullname}"></h1>
+        <div th:if="con" class="username" th:text="'@' + ${username}"></div>
+        <div th:if="!con" class="username" th:text="${username} != null ? username : 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas expedita voluptatibus molestiae nihil? Sapiente ab, hic accusamus dolor fuga laborum voluptates omnis, maiores aliquid explicabo adipisci iusto dolore corrupti facilis!'"></div>
+    </div>
+</div>
+</body>
+</html>
