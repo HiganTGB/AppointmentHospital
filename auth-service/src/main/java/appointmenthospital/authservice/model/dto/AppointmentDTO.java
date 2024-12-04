@@ -23,6 +23,5 @@ public class AppointmentDTO {
         this.state=appointment.getState();
         this.profile=appointment.getProfile().getId();
         this.doctorId=appointment.getDoctor().getId();
-
     }
 }

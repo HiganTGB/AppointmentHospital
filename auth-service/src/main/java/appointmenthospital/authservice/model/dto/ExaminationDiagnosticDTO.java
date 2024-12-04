@@ -1,9 +1,20 @@
 package appointmenthospital.authservice.model.dto;
 
+import appointmenthospital.authservice.model.entity.ExaminationDetail;
+
+import java.math.BigDecimal;
+
 public class ExaminationDiagnosticDTO {
     private String name;
-    private double price;
+    private BigDecimal price;
     private long doctorId;
     private long diagnosticServiceId;
     private long examinationId;
+    public ExaminationDiagnosticDTO(ExaminationDetail examinationDetail)
+    {
+        this.name=examinationDetail.getDiagnostic().getName();
+        this.price=examinationDetail.getDiagnostic().getPrice();
+        this.examinationId=examinationDetail.getExamination().getId();
+        this.diagnosticServiceId=examinationDetail.getDiagnostic().getId();
+    }
 }

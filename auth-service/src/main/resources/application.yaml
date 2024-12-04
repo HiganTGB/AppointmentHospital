@@ -36,6 +36,11 @@ spring:
       mail.smtp.connectiontimeout: 5000
       mail.smtp.timeout: 5000
       mail.smtp.writetimeout: 5000
+  data:
+    redis:
+      port: 6379
+      host: cache
+      password: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
 application:
   security:
     jwt:
@@ -69,12 +74,21 @@ twilio:
   auth-token:
   trial-number:
 scheduleService:
-  firstStart: 07:30
-  firstEnd : 11:30
-  lastStart : 13:00
-  lastEnd : 17:00
+  firstStart: '07:30'
+  firstEnd : '11:30'
+  lastStart : '13:00'
+  lastEnd : '17:00'
   bigStepGap : 30
   stepGap : 7
 speedSms:
   access-token: DGbph-1O7DjsmdX5jyFtytIm1sKAwXyd
   sender: 84386152395
+payment:
+  vnPay:
+    url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    tmnCode: 123
+    secretKey: 1234232
+    returnUrl: http://localhost:10006/api/v1/payment/vn-pay-callback
+    version: 2.1.0
+    command: pay
+    orderType: other

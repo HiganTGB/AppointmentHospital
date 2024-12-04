@@ -166,4 +166,5 @@ public class UserService {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         return new UserDTO(getEntity(user.getId()));
     }
+
 }

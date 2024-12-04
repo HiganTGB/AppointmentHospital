@@ -23,12 +23,12 @@ public class SchedulerPartIterable implements Iterable<SchedulerPart>, Iterator<
     }
 
     public boolean hasNext() {
-        _b = _id != 0 ? _e : _s.get_firstStart();
-        _e = _b.plus(_s.get_bigStepGap());
-        if (_b.compareTo(_s.get_lastEnd()) >= 0) return false;
-        if (_e.compareTo(_s.get_firstEnd()) >= 0 && _b.compareTo(_s.get_lastStart()) < 0) {
-            _b = _s.get_lastStart();
-            _e = _b.plus(_s.get_bigStepGap());
+        _b = _id != 0 ? _e : _s.getFirstStart();
+        _e = _b.plus(_s.getBigStepGap());
+        if (_b.compareTo(_s.getLastEnd()) >= 0) return false;
+        if (_e.compareTo(_s.getFirstEnd()) >= 0 && _b.compareTo(_s.getLastStart()) < 0) {
+            _b = _s.getLastStart();
+            _e = _b.plus(_s.getBigStepGap());
         }
         ++_id;
         _part = null;
@@ -37,7 +37,7 @@ public class SchedulerPartIterable implements Iterable<SchedulerPart>, Iterator<
 
     public SchedulerPart next() {
         if (_id == 0) throw new IllegalStateException("Iterator has not been started.");
-        if (_b.compareTo(_s.get_lastEnd()) >= 0) throw new IllegalStateException("Iterator has been stopped.");
+        if (_b.compareTo(_s.getLastEnd()) >= 0) throw new IllegalStateException("Iterator has been stopped.");
         SchedulerPart part = _part;
         if (part == null) {
             part = new SchedulerPart();
