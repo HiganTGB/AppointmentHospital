@@ -2,10 +2,11 @@ package appointmenthospital.authservice.service;
 
 import appointmenthospital.authservice.log.CustomLogger;
 import appointmenthospital.authservice.model.dto.AppointmentDTO;
-import appointmenthospital.authservice.model.entity.Appointment;
-import appointmenthospital.authservice.model.entity.Doctor;
-import appointmenthospital.authservice.model.entity.QAppointment;
+import appointmenthospital.authservice.model.dto.ProfileDTO;
+import appointmenthospital.authservice.model.entity.*;
 import appointmenthospital.authservice.repository.AppointmentRepository;
+import appointmenthospital.authservice.repository.DoctorRepository;
+import appointmenthospital.authservice.repository.ProfileRepository;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,28 +20,57 @@ import java.util.List;
 
 @Service
 public class AppointmentService {
-    private AppointmentRepository appointmentRepository;
-    private DoctorService doctorService;
+    private final DoctorRepository doctorRepository;
+    private final ProfileRepository profileRepository;
+    private final AppointmentRepository appointmentRepository;
     private CustomLogger logger;
-    private QAppointment appointment=QAppointment.appointment;
+    private final QAppointment appointment = QAppointment.appointment;
 
-    public Page<AppointmentDTO> getPaged(String keyword, Pageable pageable,Long doctor_id,Long profile_id,Long patient_id)
-    {
-        BooleanExpression byDoctor= (doctor_id!=null) ?  appointment.doctor.id.eq(doctor_id):null;
-        BooleanExpression byProfile= (profile_id!=null) ? appointment.profile.id.eq(doctor_id):null;
-        BooleanExpression byPatient= (patient_id!=null) ? appointment.profile.patient.id.eq(doctor_id):null;
+    public AppointmentService(DoctorRepository doctorRepository, ProfileRepository profileRepository, AppointmentRepository appointmentRepository) {
+        this.doctorRepository = doctorRepository;
+        this.profileRepository = profileRepository;
+        this.appointmentRepository = appointmentRepository;
+    }
 
-        Page<Appointment> appointments=appointmentRepository.findAll(byDoctor.or(byPatient).or(byProfile),pageable);
+    public Page<AppointmentDTO> getPaged(String keyword, Pageable pageable, Long doctor_id, Long profile_id, Long patient_id) {
+        BooleanExpression predicate = null;
+        if (doctor_id == null) {
+            BooleanExpression eq = appointment.doctor.id.eq(doctor_id);
+            if (predicate == null) predicate = eq;
+            else predicate.or(eq);
+        }
+        if (profile_id == null) {
+            BooleanExpression eq = appointment.profile.id.eq(profile_id);
+            if (predicate == null) predicate = eq;
+            else predicate.or(eq);
+        }
+        if (patient_id == null) {
+            BooleanExpression eq = appointment.profile.patient.id.eq(patient_id);
+            if (predicate == null) predicate = eq;
+            else predicate.or(eq);
+        }
+        Page<Appointment> appointments = predicate == null ? appointmentRepository.findAll(pageable)
+                : appointmentRepository.findAll(predicate, pageable);
         List<AppointmentDTO> response = appointments.stream().map(AppointmentDTO::new).toList();
-        return new PageImpl<AppointmentDTO>(response,appointments.getPageable(),appointments.getTotalElements());
+        return new PageImpl<>(response, appointments.getPageable(), appointments.getTotalElements());
     }
-    public Appointment getEntity(long id)
-    {
-        return appointmentRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Not found"));
+
+    public Appointment getEntity(long id) {
+        return appointmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found"));
     }
-    public AppointmentDTO get(long id)
-    {
+
+    public AppointmentDTO get(long id) {
         return new AppointmentDTO(getEntity(id));
     }
 
+    public AppointmentDTO create(AppointmentDTO dto) {
+        Appointment profile = Appointment.builder()
+                .doctor(doctorRepository.findById(dto.getDoctorId()).orElseThrow())
+                .profile(profileRepository.findById(dto.getProfile()).get())
+                .number((int) dto.getNumber())
+                .atTime(dto.getAtTime())
+                .state((int) dto.getState())
+                .build();
+        return new AppointmentDTO(appointmentRepository.save(profile));
+    }
 }

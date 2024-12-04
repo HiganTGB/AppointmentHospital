@@ -2,6 +2,8 @@ package appointmenthospital.authservice.model.dto;
 
 import appointmenthospital.authservice.model.entity.Doctor;
 import appointmenthospital.authservice.model.entity.Gender;
+import appointmenthospital.authservice.model.entity.Role;
+import appointmenthospital.authservice.model.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +12,7 @@ import lombok.Getter;
 
 @Getter
 public class DoctorDTO {
-    private long id;
+    private Long id;
     @NotBlank(message = "Full name is required")
     private String fullName;
     @Email(message = "Invalid email format")
@@ -23,18 +25,20 @@ public class DoctorDTO {
     private String certificate;
     @NotNull(message = "Gender is required")
     private Gender gender;
-    private long roleId;
-    private long userId;
+    private Long roleId;
+    private Long userId;
     public DoctorDTO(Doctor doctor)
     {
         this.id=doctor.getId();
-        this.fullName=doctor.getUser().getFullName();
-        this.email=doctor.getUser().getEmail();
-        this.phone=doctor.getUser().getPhone();
+        User user = doctor.getUser();
+        this.fullName= user.getFullName();
+        this.email= user.getEmail();
+        this.phone= user.getPhone();
         this.position=doctor.getPosition();
         this.certificate=doctor.getCertificate();
-        this.roleId=doctor.getUser().getRole().getId();
+        Role role = user.getRole();
+        this.roleId= role == null ? null : role.getId();
         this.gender=doctor.getGender();
-        this.userId=doctor.getUser().getId();
+        this.userId= user.getId();
     }
 }

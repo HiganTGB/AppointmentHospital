@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Data
 public class PatientDTO {
-    private long id;
+    private Long id;
     @NotBlank(message = "Name is required")
     private String fullName;
  //   private String userName;
@@ -20,8 +20,8 @@ public class PatientDTO {
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^\\d{10}$", message = "Invalid phone number format")
     private String phone;
-    private long roleId;
-    private long userId;
+    private Long roleId;
+    private Long userId;
     public PatientDTO(Patient patient)
     {
         this.id=patient.getId();

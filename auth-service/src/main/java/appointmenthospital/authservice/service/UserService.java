@@ -5,12 +5,15 @@ import appointmenthospital.authservice.model.dto.PatientDTO;
 import appointmenthospital.authservice.model.dtoOld.ChangePasswordRequest;
 import appointmenthospital.authservice.model.dto.UserDTO;
 import appointmenthospital.authservice.model.entity.Patient;
+import appointmenthospital.authservice.model.entity.QRole;
 import appointmenthospital.authservice.model.entity.User;
+import appointmenthospital.authservice.repository.RoleRepository;
 import appointmenthospital.authservice.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,17 +21,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.stream.StreamSupport;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final FileStorageClient fileStorageClient;
+    private final RoleService roleService;
+    private final RoleRepository roleRepository;
     private ModelMapper modelMapper;
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,FileStorageClient fileStorageClient) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FileStorageClient fileStorageClient, RoleService roleService, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.fileStorageClient=fileStorageClient;
+        this.roleService = roleService;
+        this.roleRepository = roleRepository;
     }
     public UserDTO create(UserDTO userDto,boolean isStaff)
     {
@@ -44,7 +53,7 @@ public class UserService {
                 .fullName(userDto.getFullName())
                 .phone(userDto.getPhone())
                 .email(userDto.getEmail())
-                .role(null)
+                .role(StreamSupport.stream(roleRepository.findAll(QRole.role.name.contains("patient")).spliterator(), false).findFirst().get())
                 .isEnabled(true)
                 .isStaff(isStaff)
                 .emailVerified(true)

@@ -10,7 +10,6 @@ import appointmenthospital.authservice.repository.DoctorRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,8 +22,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DoctorService {
-    private DoctorRepository doctorRepository;
-    private UserService userService;
+    private final DoctorRepository doctorRepository;
+    private final UserService userService;
     private CustomLogger customLogger;
     private final QDoctor doctor = QDoctor.doctor;
 

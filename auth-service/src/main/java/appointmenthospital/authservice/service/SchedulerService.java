@@ -40,12 +40,8 @@ public class SchedulerService {
     private Duration _bigStepGap;
     @Value("#{T(java.time.Duration).ofMinutes(${scheduleService.stepGap})}")
     private Duration _stepGap;
-    private AppointmentRepository _appointmentRepository;
-    private QAppointment appointment = QAppointment.appointment;
-
-    public SchedulerService(@Autowired AppointmentRepository appointmentRepository) {
-        _appointmentRepository = appointmentRepository;
-    }
+    private final AppointmentRepository _appointmentRepository;
+    private final QAppointment appointment = QAppointment.appointment;
 
     public LocalTime getFirstStart() {
         return _firstStart;
@@ -148,7 +144,7 @@ public class SchedulerService {
 //        return _allocations;
     }
 
-    SchedulerAllocation allocate(long doctorId, LocalDate date, LocalTime start, LocalTime end) {
+    public SchedulerAllocation allocate(long doctorId, LocalDate date, LocalTime start, LocalTime end) {
         LocalDate now = LocalDate.now();
         if (date.compareTo(now) <= 0) return null;
         if (start.compareTo(end) >= 0) return null;
@@ -184,7 +180,7 @@ public class SchedulerService {
         return null;
     }
 
-    SchedulerAllocation allocate(long doctorId) {
+    public SchedulerAllocation allocate(long doctorId) {
         LocalDateTime now = LocalDateTime.now(Clock.systemUTC());
         LocalDate dnow = now.toLocalDate();
         LocalTime tnow = now.toLocalTime();

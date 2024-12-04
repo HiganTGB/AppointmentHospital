@@ -25,10 +25,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
-    private ProfileRepository profileRepository;
-    private PatientService patientService;
+    private final ProfileRepository profileRepository;
+    private final PatientService patientService;
     private CustomLogger logger;
-    private QProfile profile=QProfile.profile;
+    private final QProfile profile=QProfile.profile;
 
 
     public Page<ProfileDTO> getPaged(String keyword, Pageable pageable)

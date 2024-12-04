@@ -7,14 +7,14 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 @Getter
 public class AppointmentDTO {
-    private long id;
+    private Long id;
     @JsonProperty("at")
     private LocalDateTime atTime;
     private long number;
     private long state;
     private Long profile;
     @JsonProperty("doctor")
-    private long doctorId;
+    private Long doctorId;
     public AppointmentDTO(Appointment appointment)
     {
         this.id=appointment.getId();

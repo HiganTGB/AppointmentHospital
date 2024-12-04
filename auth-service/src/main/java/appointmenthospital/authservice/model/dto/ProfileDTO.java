@@ -10,9 +10,9 @@ import java.time.LocalDate;
 import java.util.Date;
 @Getter
 public class ProfileDTO {
-    private long id;
+    private Long id;
     @NotNull(message = "patient not found")
-    private long patientId;
+    private Long patientId;
     @JsonProperty("full_name")
     @NotNull(message = "full_name not valid")
     private String fullName;
