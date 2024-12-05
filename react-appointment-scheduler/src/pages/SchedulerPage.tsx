@@ -81,7 +81,6 @@ export function Scheduler() {
                     }
                     return dates;
                 })().map(function (value, index) {
-                    console.log(index, value);
                     return {
                         key: value.date.toISOString().split("T")[0],
                         label: `${value.date.getDate()}/${value.date.getMonth()}`,
@@ -90,14 +89,17 @@ export function Scheduler() {
                 })
             } />
             <ComboBox label="Hồ sơ" attributes={{ name: "profile" }}>
-                {profiles.map(function (value) {
-                    return (<option value={value.id}>{value.full_name}</option>);
+                {profiles.map(function (value, i) {
+                    return (<option value={value.id} selected={i == 0}>{value.full_name}</option>);
                 })}
                 <option value="new">&lt;Thêm hồ sơ&gt;</option>
             </ComboBox>
             <ComboBox label="Khung giờ" attributes={{ name: "timerange" }}>
                 {parts.map(function (value) {
-                    return (<option value={`${value.start}@${value.end}`}>{value.start} - {value.end}</option>);
+                    function simplify(time?: string) {
+                        return !time ? '' : time.slice(0, time.indexOf(':', time.indexOf(':') + 1));
+                    }
+                    return (<option value={`${value.start}@${value.end}`}>{simplify(value.start)} - {simplify(value.end)}</option>);
                 })}
             </ComboBox>
             <SubmitButton attributes={{
