@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class RoleController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Operation(summary = "Page", description = "Get page + search by keyword")
+    @PreAuthorize("hasAuthority('ReadRole')")
     public Page<RoleDTO> getAll(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
             @RequestParam(defaultValue = "0",value = "page",required =false)int page,
                                 @RequestParam(value="sortBy" ,required = false,defaultValue = "id") String sortBy,
@@ -42,6 +44,7 @@ public class RoleController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('ReadRole')")
     public RoleDTO get(@PathVariable Long id)
     {
         return roleService.get(id);
@@ -49,6 +52,7 @@ public class RoleController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('CreateRole')")
     public RoleDTO create(@RequestBody @Valid RoleDTO roleDTO)
     {
         return roleService.create(roleDTO);
@@ -56,6 +60,7 @@ public class RoleController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('UpdateRole')")
     public RoleDTO update(@PathVariable Long id,@RequestBody @Valid RoleDTO roleDTO)
     {
         return roleService.update(roleDTO,id);
@@ -63,6 +68,7 @@ public class RoleController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('DeleteRole')")
     public boolean delete(@PathVariable Long id)
     {
         return roleService.delete(id);
@@ -71,6 +77,7 @@ public class RoleController {
     @GetMapping("/{id}/permissions")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('UpdateRole')")
     public List<Permission> getPermission(@PathVariable Long id)
     {
         return roleService.get(id).getPermissions();
@@ -78,6 +85,7 @@ public class RoleController {
     @PostMapping("/{id}/permissions/{permit}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('UpdateRole')")
     public RoleDTO changePermission(@PathVariable Long id,@PathVariable int permit,
                                     @RequestParam(value="granted" ,required = true) Boolean granted)
     {

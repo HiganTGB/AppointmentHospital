@@ -5,10 +5,12 @@ import appointmenthospital.authservice.model.entity.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 @Data
+@NoArgsConstructor
 public class RoleDTO {
     private Long id;
     @NotBlank(message = "Name is required")

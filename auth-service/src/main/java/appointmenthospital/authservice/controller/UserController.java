@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -88,6 +89,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Operation(summary = "Page", description = "Get page + search by keyword")
+    @PreAuthorize("hasAuthority('ReadUser')")
     public Page<PatientDTO> getAll(@RequestParam(defaultValue = "", value = "search", required = false) String keyword,
                                    @RequestParam(defaultValue = "0", value = "page", required = false) int page,
                                    @RequestParam(value = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -102,6 +104,7 @@ public class UserController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('ReadUser')")
     public PatientDTO get(@PathVariable Long id) {
         return patientService.get(id);
     }
@@ -109,6 +112,7 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('CreateUser')")
     public PatientDTO create(@RequestBody @Valid PatientDTO patientDTO) {
         return patientService.create(patientDTO);
     }
@@ -116,6 +120,7 @@ public class UserController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('UpdateUser')")
     public PatientDTO update(@PathVariable Long id, @RequestBody @Valid PatientDTO patientDTO) {
         return patientService.update(patientDTO, id);
     }
@@ -123,6 +128,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('DeleteUser')")
     public Boolean delete(@PathVariable Long id) {
         return patientService.delete(id);
     }

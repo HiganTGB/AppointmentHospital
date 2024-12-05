@@ -4,6 +4,7 @@ import appointmenthospital.authservice.model.dto.*;
 import appointmenthospital.authservice.model.entity.*;
 import appointmenthospital.authservice.service.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +41,7 @@ public class DemoController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('UpdateRole')")
     public ResponseEntity<String> sayHello() {
         RoleDTO admin = new RoleDTO(Role.builder().name("admin").description("admin").permissions(new byte[Role.PERMISSIONS_STRING_LIMIT]).build()),
                 doctor = new RoleDTO(Role.builder().name("doctor").description("doctor").permissions(new byte[Role.PERMISSIONS_STRING_LIMIT]).build()),

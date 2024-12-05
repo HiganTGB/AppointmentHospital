@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,6 +55,7 @@ public class DoctorController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('ReadUser')")
     public DoctorDTO get(@PathVariable Long id)
     {
         return doctorService.get(id);
@@ -61,6 +63,7 @@ public class DoctorController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('CreateUser')")
     public DoctorDTO create(@RequestBody @Valid DoctorDTO dto)
     {
         return doctorService.create(dto);
@@ -68,6 +71,7 @@ public class DoctorController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('UpdateUser')")
     public DoctorDTO update(@PathVariable Long id,@RequestBody @Valid DoctorDTO dto)
     {
         return doctorService.update(dto,id);
@@ -75,6 +79,7 @@ public class DoctorController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('DeleteUser')")
     public Boolean delete(@PathVariable Long id)
     {
         return doctorService.delete(id);
@@ -86,6 +91,7 @@ public class DoctorController {
         return userService.setImage(file,dto.getId());
     }
     @PostMapping("/{doctor_id}/image")
+
     public ResponseEntity<?> getImage(@PathVariable Long doctor_id)
     {
         DoctorDTO dto=doctorService.get(doctor_id);

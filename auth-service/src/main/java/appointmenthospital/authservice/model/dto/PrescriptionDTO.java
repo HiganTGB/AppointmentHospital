@@ -2,9 +2,12 @@ package appointmenthospital.authservice.model.dto;
 
 import appointmenthospital.authservice.model.entity.Prescription;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Getter
+@Data
+@NoArgsConstructor
 public class PrescriptionDTO {
     private long id;
 

@@ -2,10 +2,15 @@ package appointmenthospital.authservice.model.dto;
 
 import appointmenthospital.authservice.model.entity.Appointment;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-@Getter
+@Data
+@NoArgsConstructor
 public class AppointmentDTO {
     private Long id;
     @JsonProperty("at")
@@ -15,6 +20,10 @@ public class AppointmentDTO {
     private Long profile;
     @JsonProperty("doctor")
     private Long doctorId;
+    private BigDecimal price;
+    @Setter
+    @JsonProperty("payment_url")
+    private String payment;
     public AppointmentDTO(Appointment appointment)
     {
         this.id=appointment.getId();
@@ -23,6 +32,6 @@ public class AppointmentDTO {
         this.state=appointment.getState();
         this.profile=appointment.getProfile().getId();
         this.doctorId=appointment.getDoctor().getId();
-
+        this.price=appointment.getPrice();
     }
 }

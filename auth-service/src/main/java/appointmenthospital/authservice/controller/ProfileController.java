@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -32,6 +33,7 @@ public class ProfileController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Operation(summary = "Page", description = "Get page + search by keyword")
+    @PreAuthorize("hasAuthority('ReadProfile')")
     public List<ProfileDTO> getAll(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
                                    @RequestParam(defaultValue = "0",value = "page",required =false)int page,
                                    @RequestParam(value="sortBy" ,required = false,defaultValue = "fullName") String sortBy,
@@ -59,6 +61,7 @@ public class ProfileController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('ReadProfile')")
     public ProfileDTO get(@PathVariable Long id)
     {
         return profileService.get(id);
@@ -66,6 +69,7 @@ public class ProfileController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('CreateProfile')")
     public ProfileDTO create(@RequestBody @Valid ProfileDTO profileDTO)
     {
         return profileService.create(profileDTO);
@@ -73,6 +77,7 @@ public class ProfileController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('UpdateProfile')")
     public ProfileDTO update(@PathVariable Long id,@RequestBody @Valid ProfileDTO profileDTO)
     {
         return profileService.update(profileDTO,id);
@@ -80,6 +85,7 @@ public class ProfileController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('DeleteProfile')")
     public Boolean delete(@PathVariable Long id)
     {
         return profileService.delete(id);

@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +40,7 @@ public class ExaminationController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Operation(summary = "Page", description = "Get page + search by keyword")
+    @PreAuthorize("hasAuthority('ReadExamination')")
     public Page<ExaminationDTO> getAll(@RequestParam(defaultValue = "",value = "search",required =false) String keyword,
                                        @RequestParam(defaultValue = "0",value = "page",required =false)int page,
                                        @RequestParam(value="sortBy" ,required = false,defaultValue = "id") String sortBy,
@@ -55,6 +57,7 @@ public class ExaminationController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('ReadExamination')")
     public ExaminationDTO get(@PathVariable Long id)
     {
         return  examinationService.get(id);
@@ -62,6 +65,7 @@ public class ExaminationController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('CreateExamination')")
     public ExaminationDTO create(@RequestBody @Valid ExaminationDTO DTO)
     {
         return  examinationService.create(DTO);
@@ -69,6 +73,7 @@ public class ExaminationController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('UpdateExamination')")
     public ExaminationDTO update(@PathVariable Long id,@RequestBody @Valid ExaminationDTO DTO)
     {
         return  examinationService.update(DTO,id);
@@ -76,6 +81,7 @@ public class ExaminationController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('DeleteExamination')")
     public boolean delete(@PathVariable Long id)
     {
         return  examinationService.delete(id);
@@ -83,14 +89,17 @@ public class ExaminationController {
     @GetMapping("/{id}/perscription")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('ReadPrescription')")
     public PrescriptionDTO get(@PathVariable long id)
     {
         Examination examination=examinationService.getEntity(id);
         return new PrescriptionDTO(examination.getPrescription());
     }
+
     @PostMapping("/{id}/perscription")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('CreatePrescription')")
     public PrescriptionDTO create(@PathVariable long id,@RequestBody @Valid PrescriptionDTO DTO)
     {
         return  prescriptionService.create(id,DTO);
@@ -98,6 +107,7 @@ public class ExaminationController {
     @DeleteMapping("/{id}/perscription")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @PreAuthorize("hasAuthority('DeletePrescription')")
     public Boolean delete(@PathVariable long id)
     {
 

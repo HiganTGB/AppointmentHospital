@@ -21,5 +21,7 @@ public class ExaminationDetail extends BaseEntity {
     @JoinColumn(name = "diagnostic_service_id")
     private Diagnostic diagnostic;
     @ManyToOne
+    @JoinColumn(name = "examination_id")
     private Examination examination;
+    private String document;
 }

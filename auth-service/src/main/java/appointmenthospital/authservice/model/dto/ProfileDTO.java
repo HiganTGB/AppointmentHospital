@@ -4,11 +4,14 @@ import appointmenthospital.authservice.model.entity.Gender;
 import appointmenthospital.authservice.model.entity.Profile;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Date;
-@Getter
+@Data
+@NoArgsConstructor
 public class ProfileDTO {
     private Long id;
     @NotNull(message = "patient not found")

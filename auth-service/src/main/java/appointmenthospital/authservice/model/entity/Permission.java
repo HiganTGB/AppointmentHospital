@@ -4,13 +4,14 @@ import lombok.Getter;
 
 @Getter
 public enum Permission{
+    SystemPrivilege(0,"System"),
     ReadRole(1,"READ ROLE"),
-    CreateRole(2,"READ ROLE"),
-    UpdateRole(3,"READ ROLE"),
-    DeleteRole(4,"READ ROLE"),
-    ReadUser(5,"READ ROLE"),
-    CreateUser(6,"READ ROLE"),
-    UpdateUser(7,"READ ROLE"),
+    CreateRole(2,"CreateRole"),
+    UpdateRole(3,"UpdateRole"),
+    DeleteRole(4,"DeleteRole"),
+    ReadUser(5,"ReadUser"),
+    CreateUser(6," CreateUser"),
+    UpdateUser(7," UpdateUser"),
     DeleteUser(8,"READ ROLE"),
     ReadProfile(9,"READ ROLE"),
     CreateProfile(10,"READ ROLE"),
