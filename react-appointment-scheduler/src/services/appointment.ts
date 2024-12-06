@@ -26,6 +26,7 @@ export type Appointment = {
     state?: number;
     profile?: number;
     doctor?: number;
+    payment_url?: string;
 }
 
 export type FutureAppointment = {
@@ -39,10 +40,9 @@ export type AppointmentResponse = BaseAppointmentErrorResponse | (Appointment & 
     type: "ok";
 })
 
-export type CreateAppointmentResponse = BaseAppointmentErrorResponse | {
+export type CreateAppointmentResponse = BaseAppointmentErrorResponse | (Appointment & {
     type: "ok";
-    message?: string;
-}
+})
 
 export type AppointmentsResponse = BaseAppointmentErrorResponse | (Appointment[] & {
     type: "ok";
@@ -123,7 +123,8 @@ export async function createAppointment(request: AppointmentRequest): Promise<Cr
             message: `HTTP error! status: ${response.status}; content: ${JSON.stringify(response)};`
         };
         const result = await response.json();
-        return { type: "ok", message: result.toString() };
+        result.type = "ok";
+        return result;
     } catch (error) {
         return {
             type: "error",

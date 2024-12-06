@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 
 import "./Page.css";
 import "./SchedulerPage.css";
@@ -9,8 +9,11 @@ import { Doctor, getDoctors } from "../services/doctor";
 import { getParts, Part } from "../services/scheduler";
 import { getProfiles, Profile } from "../services/profile";
 import { createAppointment } from "../services/appointment";
+import { useNavigate } from "react-router-dom";
 
 export function Scheduler() {
+    const navigate = useNavigate();
+
     const [doctors, setDoctors] = useState<Doctor[]>([]);
     useEffect(() => {
         getDoctors().then((value) => {
@@ -41,25 +44,29 @@ export function Scheduler() {
         });
     }, [])
 
+    const formRef = useRef<HTMLFormElement>(null);
+
     async function handleSubmit(this: HTMLFormElement, event: FormEvent) {
         event.preventDefault();
-        const [start, end] = this.timerange.value.split("@");
+        var form = formRef.current as any;
+        const [start, end] = form.timerange.value.split("@");
         const response = await createAppointment({
-            doctor: Number(this.doctor.value),
-            profile: Number(this.profile.value),
-            date: this.date.value,
+            doctor: Number(form.doctor.value),
+            profile: Number(form.profile.value),
+            date: form.date.value,
             begin_time: start,
             end_time: end
         });
         if (response.type == "ok") {
-            alert("Đặt lịch thành công.");
+            if (response.payment_url)
+                window.location.href = response.payment_url;
         } else {
             alert("Lịch đã kín.");
         }
     }
 
     return (
-        <form className="Scheduler Page" onSubmit={handleSubmit}>
+        <form ref={formRef} className="Scheduler Page" onSubmit={handleSubmit}>
             <h2 className="title">Đặt lịch</h2>
             <ComboBox label="Chuyên khoa" attributes={{ name: "doctor" }}>
                 <option value="none">(Chọn chuyên khoa)</option>
@@ -94,7 +101,7 @@ export function Scheduler() {
                 })}
                 <option value="new">&lt;Thêm hồ sơ&gt;</option>
             </ComboBox>
-            <ComboBox label="Khung giờ" attributes={{ name: "timerange" }}>
+            <ComboBox label="Khung giờ" attributes={{ name: "timerange", id: "timerange" }}>
                 {parts.map(function (value) {
                     function simplify(time?: string) {
                         return !time ? '' : time.slice(0, time.indexOf(':', time.indexOf(':') + 1));

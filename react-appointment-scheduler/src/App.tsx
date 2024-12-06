@@ -51,7 +51,7 @@ function AppContent() {
         <AccountCard
           user={user}
           name={user && user.full_name}
-          username={(user && (user.username || user.phone)) || "Bạn cần đăng nhập ... Lorem ipsum dolor sit, amet consectetur adipisicing elit. Veritatis aperiam autem animi magni assumenda, itaque ex? Sunt pariatur commodi velit eius animi autem consequuntur officiis est, non consequatur tenetur soluta?"}
+          username={(user && (user.username || user.phone)) || "Bạn cần đăng nhập để thực hiện chức năng đặt lịch, xem lịch đã đặt, ..."}
           imageURL={user && (user.image || user.id ? apiServer + "user/current/image" : "/favicon.ico")}
           actionAttributes={{
             async onClick() {

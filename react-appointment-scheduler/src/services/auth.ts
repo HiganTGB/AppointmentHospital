@@ -50,9 +50,15 @@ export async function login(request: AuthRequest): Promise<AuthResponse> {
 
 export async function register(request: RegisterRequest): Promise<RegisterResponse> {
     try {
-        const response: Response = await fetch(apiServer + "auth/register", {
+        const response: Response = await fetch(apiServer + "v1/auth/register", {
             method: "POST",
-            body: request
+            body: JSON.stringify({
+                phone: request.get("username"),
+                email: request.get("email"),
+                full_name: request.get("full_name"),
+                password: request.get("password"),
+                otp: 123456
+            })
         });
         if ((response.status / 400) == 1) return {
             type: "error",

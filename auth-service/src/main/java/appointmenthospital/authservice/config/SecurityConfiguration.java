@@ -38,7 +38,9 @@ public class SecurityConfiguration {
             "/auth-service/configuration/security",
             "/auth-service/swagger-ui/**",
             "/auth-service/webjars/**",
-            "/auth-service/swagger-ui.html"};
+            "/auth-service/swagger-ui.html",
+            "/api/v1/appointment/vn-pay-callback"
+    };
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;

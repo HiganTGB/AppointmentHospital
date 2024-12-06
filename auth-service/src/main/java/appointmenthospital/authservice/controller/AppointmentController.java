@@ -3,10 +3,7 @@ package appointmenthospital.authservice.controller;
 import appointmenthospital.authservice.exc.AppException;
 import appointmenthospital.authservice.model.dto.AppointmentDTO;
 import appointmenthospital.authservice.model.dto.DoctorDTO;
-import appointmenthospital.authservice.model.entity.Appointment;
-import appointmenthospital.authservice.model.entity.Doctor;
-import appointmenthospital.authservice.model.entity.Profile;
-import appointmenthospital.authservice.model.entity.SchedulerAllocation;
+import appointmenthospital.authservice.model.entity.*;
 import appointmenthospital.authservice.model.entity.Appointment;
 import appointmenthospital.authservice.model.entity.Doctor;
 import appointmenthospital.authservice.model.entity.Profile;
@@ -28,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -38,6 +36,7 @@ import java.time.LocalTime;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/appointment")
@@ -46,19 +45,21 @@ public class AppointmentController {
     private final SchedulerService schedulerService;
     private final DoctorService doctorService;
     private final ProfileService profileService;
-    private final SchedulerService schedulerService;
-    private final DoctorService doctorService;
-    private final ProfileService profileService;
     private final UserService userService;
     private final AppointmentService appointmentService;
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @PreAuthorize("hasAuthority('UpdateRole')")
     public AppointmentDTO get(@PathVariable Long id) {
         return appointmentService.get(id);
+    }
+
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
     @Operation(summary = "Page", description = "Get page + search by keyword")
     public Page<AppointmentDTO> getAll(@RequestParam(defaultValue = "", value = "search", required = false) String keyword,
                                        @RequestParam(defaultValue = "0", value = "page", required = false) int page,
@@ -80,7 +81,7 @@ public class AppointmentController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Operation(summary = "Page", description = "Get page + search by keyword")
-    public Page<AppointmentDTO> getAll(@RequestParam(defaultValue = "", value = "search", required = false) String keyword,
+    public List<AppointmentDTO> getAll(@RequestParam(defaultValue = "", value = "search", required = false) String keyword,
                                        @RequestParam(defaultValue = "0", value = "page", required = false) int page,
                                        @RequestParam(value = "sortBy", required = false, defaultValue = "atTime") String sortBy,
                                        @RequestParam(value = "orderBy", required = false, defaultValue = "ASC") String orderBy,
@@ -91,7 +92,7 @@ public class AppointmentController {
 
         Pageable pageable = PageRequest.of(page, 10, sort); // Assuming a page size of 10
 
-        return appointmentService.getPaged(keyword, pageable, userService.get(connectedUser).getId());
+        return appointmentService.getPaged(keyword, pageable, connectedUser).getContent();
     }
 
 
@@ -112,6 +113,7 @@ public class AppointmentController {
         ap1 = appointmentService.create(ap1,request);
         return ap1;
     }
+
     @GetMapping("/vn-pay-callback")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
@@ -123,27 +125,6 @@ public class AppointmentController {
         } else {
             return false;
         }
-    }
-
-    public AppointmentDTO get(@PathVariable Long id) {
-        return appointmentService.get(id);
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public AppointmentDTO create(@RequestParam(value = "date") LocalDate date,
-                                 @RequestParam(value = "start") LocalTime start_time,
-                                 @RequestParam(value = "end") LocalTime end_time,
-                                 @RequestParam(value = "doctor") long doctor_id,
-                                 @RequestParam(value = "profile") long profile_id) {
-        Doctor doctor = doctorService.getEntity(doctor_id);
-        Profile profile = profileService.getEntity(profile_id);
-        SchedulerAllocation allocate = schedulerService.allocate(doctor_id, date, start_time, end_time);
-        if (allocate == null) throw new IllegalStateException("Allocate failed");
-        AppointmentDTO ap1 = new AppointmentDTO(Appointment.builder().atTime(LocalDateTime.of(date, allocate.atTime)).number(Math.toIntExact(allocate.getId())).profile(profile).doctor(doctor).build());
-        ap1 = appointmentService.create(ap1);
-        return ap1;
     }
 
 //    @PutMapping("/{id}")
