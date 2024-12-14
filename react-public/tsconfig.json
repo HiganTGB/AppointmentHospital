@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "checkJs": true,
+    "jsx": "preserve",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "target": "ESNext",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "skipLibCheck": false,
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "awesomeTypescriptLoaderOptions": {
+    "useBabel": false,
+    "useCache": false
+  },
+  "include": [
+    "./src/**/*",
+    "./global.d.ts"
+  ]
+}
