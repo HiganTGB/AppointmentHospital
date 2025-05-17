@@ -1,0 +1,11 @@
+{
+  "userRequest": {
+    "firstName": "John",
+    "lastName": "Doy",
+    "email": "johndoy@example.com",
+    "phone": "1234567891"
+  },
+  "degree": "BS",
+  "gender": true,
+  "medicalSpecialtiesId": [1,2]
+}

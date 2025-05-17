@@ -7,22 +7,22 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="auth-service" />
-        <module name="payment-service" />
         <module name="appointment-service" />
-        <module name="schedule-service" />
-        <module name="thymeleaf-client" />
         <module name="eureka-server" />
         <module name="gateway" />
         <module name="file-storage" />
-        <module name="info-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="info-service" target="17" />
+      <module name="payment-service" target="17" />
+      <module name="schedule-service" target="17" />
+      <module name="thymeleaf-client" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="appointment-service" options="-parameters" />
-      <module name="auth-service" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
       <module name="file-storage" options="-parameters" />
       <module name="gateway" options="-parameters" />
