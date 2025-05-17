@@ -10,10 +10,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 @EnableFeignClients
 @EnableDiscoveryClient
-public class AuthServiceApplication {
+public class AppointmentServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AuthServiceApplication.class, args);
+        SpringApplication.run(AppointmentServiceApplication.class, args);
     }
 //    @Bean
 //    CommandLineRunner commandLineRunner(UserService userService)

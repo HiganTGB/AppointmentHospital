@@ -14,7 +14,7 @@ http://localhost:9999/swagger-ui.html
     * Core : Spring Boot( Gateway, Eureka, JPA, Security) , Java
     * DataBase : MySQL
     * API : Speedsms , Vnpay, Twilio
-    * Other: JWT , Java Email, OpenFeign,ModelMapper, Swagger
+    * Other: JWT , Java Email, OpenFeign,ModelMapper, Swagger ,Querydsl
     * Test : Postman
 ## Các module được triển khai:
 - Database (MySQL)
