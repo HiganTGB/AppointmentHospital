@@ -1,19 +1,22 @@
-# Appointment Hospital
-## Installation
-1. Open Docker , use the one database.yaml
-2. Start eureka Server
-3. Start all service
-4. Start gateway
+# Hệ thống đặt lịch khám bệnh cho phòng khám tư nhân.
+Using frontend same here : https://github.com/hxb3011/appointment-scheduler--dotnet--react
+## Thành viên: [Tên - MSSV]
+- Trần Gia Bảo -3121560015
+- Huỳnh Xuân Bách - 3121560013
+
+## Cấu hình môi trường phát triển:
+
+    (Xem trong trang thông tin nhóm)
 
 ## Api doc (Swagger-UI)
 http://localhost:9999/swagger-ui.html
-
-
-## Quy trình đặt lịch khám bệnh
-
-1. Chọn hồ sơ ( lấy patientProfile)
-2. Chọn chuyên khoa (Lấy danh sách specialty)
-3. Chọn ngày khám (Lấy danh sách available date)
-4. Chọn giờ khám ( lấy Schedule , vòng lặp call api để lấy giá trị )
-
+## Công nghệ và tools:
+    * Core : Spring Boot( Gateway, Eureka, JPA, Security) , Java
+    * DataBase : MySQL
+    * API : Speedsms , Vnpay, Twilio
+    * Other: JWT , Java Email, OpenFeign,ModelMapper, Swagger
+    * Test : Postman
+## Các module được triển khai:
+- Database (MySQL)
+- Service (Appointment,File storage)
    
