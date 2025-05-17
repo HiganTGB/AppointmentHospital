@@ -21,7 +21,12 @@
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/appointment-service/pom.xml" />
         <option value="$PROJECT_DIR$/eureka-server/gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/info-service/pom.xml" />
+        <option value="$PROJECT_DIR$/payment-service/pom.xml" />
+        <option value="$PROJECT_DIR$/schedule-service/pom.xml" />
+        <option value="$PROJECT_DIR$/thymeleaf-client/pom.xml" />
       </set>
     </option>
   </component>

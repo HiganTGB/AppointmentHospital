@@ -23,21 +23,21 @@ public class GatewayConfig {
 
 
 
-                // Auth-Service
-                .route("auth-service", r -> r.path("/api/v1/doctors/**")
-                        .uri("lb://auth-service"))
-                .route("auth-service", r -> r.path("/api/v1/examinations/**")
-                        .uri("lb://auth-service"))
-                .route("auth-service", r -> r.path("/api/v1/users/**")
-                        .uri("lb://auth-service"))
-                .route("auth-service", r -> r.path("/api/v1/auth/**")
-                        .uri("lb://auth-service"))
-                .route("auth-service", r -> r.path("/api/v1/patients/**")
-                        .uri("lb://auth-service"))
+                // appointment-service
+                .route("appointment-service", r -> r.path("/api/v1/doctors/**")
+                        .uri("lb://appointment-service"))
+                .route("appointment-service", r -> r.path("/api/v1/examinations/**")
+                        .uri("lb://appointment-service"))
+                .route("appointment-service", r -> r.path("/api/v1/users/**")
+                        .uri("lb://appointment-service"))
+                .route("appointment-service", r -> r.path("/api/v1/auth/**")
+                        .uri("lb://appointment-service"))
+                .route("appointment-service", r -> r.path("/api/v1/patients/**")
+                        .uri("lb://appointment-service"))
                 .route("auth-service", r -> r.path("/api/v1/profiles/**")
-                        .uri("lb://auth-service"))
-                .route("auth-service", r -> r.path("/api/v1/roles/**")
-                        .uri("lb://auth-service"))
+                        .uri("lb://appointment-service"))
+                .route("appointment-service", r -> r.path("/api/v1/roles/**")
+                        .uri("lb://appointment-service"))
 
                 .route("file-storage", r -> r.path("/api/v1/file-storage/**")
                        // .filters(f -> f.filter(filter))

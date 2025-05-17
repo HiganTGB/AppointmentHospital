@@ -1,5 +1,5 @@
 app:
-  name: auth-service
+  name: appointment-service
 eureka:
   client:
     serviceUrl:
@@ -8,7 +8,7 @@ eureka:
     preferIpAddress: true
 spring:
   application:
-    name: auth-service
+    name: appointment-service
   jpa:
     hibernate:
       ddl-auto: update
